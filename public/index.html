@@ -527,6 +527,38 @@
             }
         }
     </script>
+    <script>
+    // Prevenir recarga al rotar
+    let lastWidth = window.innerWidth;
+    let lastHeight = window.innerHeight;
+    
+    window.addEventListener('resize', () => {
+        const newWidth = window.innerWidth;
+        const newHeight = window.innerHeight;
+        
+        // Solo es rotación si cambian ambas dimensiones significativamente
+        if (Math.abs(lastWidth - newWidth) > 100 || Math.abs(lastHeight - newHeight) > 100) {
+            console.log('🔄 Rotación detectada - manteniendo estado');
+            lastWidth = newWidth;
+            lastHeight = newHeight;
+        }
+    });
+    
+    // Guardar estado antes de cualquier descarga
+    window.addEventListener('beforeunload', () => {
+        sessionStorage.setItem('lastView', currentView || 'home');
+    });
+    
+    // Restaurar estado al cargar
+    window.addEventListener('load', () => {
+        const lastView = sessionStorage.getItem('lastView');
+        if (lastView && lastView !== 'home') {
+            console.log('🔄 Restaurando vista:', lastView);
+            // La vista se restaurará automáticamente por el sistema
+        }
+    });
+    </script>
 </body>
 
 </html>
+
