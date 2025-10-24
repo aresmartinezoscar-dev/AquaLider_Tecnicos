@@ -64,105 +64,120 @@ function showView(viewName) {
 // ====== PRIMER USO ======
 
 function setupFirstRunForm() {
-    const form = document.getElementById('first-run-form');
+  const form = document.getElementById('first-run-form');
+  
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const userCode = document.getElementById('user-code').value.trim();
+    const systemName = document.getElementById('system-name').value.trim();
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+    if (!userCode) {
+      alert('Por favor ingresa tu código de usuario');
+      return;
+    }
 
-        const userCode = document.getElementById('user-code').value.trim();
-        const systemName = document.getElementById('system-name').value.trim();
+    // Generar deviceId único
+    const deviceId = generateUUID();
 
-        if (!userCode) {
-            alert('Por favor ingresa tu código de usuario');
-            return;
-        }
-
-        // Generar deviceId único
-        const deviceId = generateUUID();
-
-        // Actualizar configuración
-        await updateConfig({
-            userCode,
-            nombreSistema: systemName,
-            deviceId
-        });
-
-        // Recargar config
-        config = await getConfig();
-
-        // Inicializar Firebase
-        initFirebase();
-
-        // Verificar si el usuario existe en Firebase y cargar datos
-        const { downloadFromFirebase } = await import('./firebase-sync.js');
-        const firebaseData = await downloadFromFirebase(userCode);
-
-        // DEBUG: Ver qué datos llegan
-        console.log('🔍 Datos de Firebase:', firebaseData);
-
-        if (firebaseData) {
-            console.log('📥 Usuario encontrado en Firebase');
-            console.log('  - Mediciones:', firebaseData.mediciones ? Object.keys(firebaseData.mediciones).length : 0);
-            console.log('  - Comentarios:', firebaseData.comentarios ? Object.keys(firebaseData.comentarios).length : 0);
-            console.log('  - Umbrales:', firebaseData.umbrales ? 'Sí' : 'No');
-
-            if (firebaseData) {
-                console.log('📥 Usuario encontrado en Firebase, cargando datos...');
-
-                // Importar mediciones
-                if (firebaseData.mediciones) {
-                    const { importMeasurementsFromFirebase } = await import('./repo.js');
-                    await importMeasurementsFromFirebase(firebaseData.mediciones);
-                }
-
-                // Importar comentarios
-                if (firebaseData.comentarios) {
-                    const { importCommentsFromFirebase } = await import('./repo.js');
-                    await importCommentsFromFirebase(firebaseData.comentarios);
-                }
-
-                // Cargar configuración de Firebase si existe
-                if (firebaseData.umbrales) {
-                    await updateConfig({
-                        umbralPhMin: firebaseData.umbrales.phMin,
-                        umbralPhMax: firebaseData.umbrales.phMax,
-                        umbralCondMin: firebaseData.umbrales.condMin,
-                        umbralCondMax: firebaseData.umbrales.condMax,
-                        umbralAmonioMin: firebaseData.umbrales.amonioMin || 0,
-                        umbralAmonioMax: firebaseData.umbrales.amonioMax || 0.5,
-                        umbralNitritoMin: firebaseData.umbrales.nitritoMin || 0,
-                        umbralNitritoMax: firebaseData.umbrales.nitritoMax || 0.2,
-                        umbralNitratoMin: firebaseData.umbrales.nitratoMin || 5,
-                        umbralNitratoMax: firebaseData.umbrales.nitratoMax || 150
-                    });
-                }
-
-                if (firebaseData.nivel) {
-                    await updateConfig({
-                        minNivel: firebaseData.nivel.min,
-                        maxNivel: firebaseData.nivel.max
-                    });
-                }
-
-                console.log('✅ Datos cargados desde Firebase');
-            } else {
-                console.log('👤 Usuario nuevo, creando en Firebase...');
-                await syncAll(config);
-            }
-
-            // Recargar config
-            config = await getConfig();
-
-            // Ir al home
-            showView('home');
-            await loadHomeView();
-            setupNavigationHandlers();
-            setupMeasurementForms();
-            setupSettingsForm();
-            setupSyncButton();
-            applyTheme();
-        }
+    // Actualizar configuración
+    await updateConfig({
+      userCode,
+      nombreSistema: systemName,
+      deviceId
     });
+
+    // Recargar config
+    config = await getConfig();
+
+    // Inicializar Firebase
+    initFirebase();
+    
+    // Verificar si el usuario existe en Firebase y cargar datos
+    const { downloadFromFirebase } = await import('./firebase-sync.js');
+    const firebaseData = await downloadFromFirebase(userCode);
+    
+    console.log('🔍 Datos de Firebase:', firebaseData);
+    
+    if (firebaseData) {
+      console.log('📥 Usuario encontrado en Firebase, cargando datos...');
+      
+      // CARGAR ESTADO DE TÉRMINOS DESDE FIREBASE
+      if (firebaseData.terminosAceptados !== undefined) {
+        await updateConfig({
+          terminosAceptados: firebaseData.terminosAceptados,
+          terminosAceptadosTs: firebaseData.terminosAceptadosTs || null
+        });
+        console.log('✅ Términos cargados:', firebaseData.terminosAceptados);
+      }
+      
+      // Importar mediciones
+      if (firebaseData.mediciones) {
+        const { importMeasurementsFromFirebase } = await import('./repo.js');
+        await importMeasurementsFromFirebase(firebaseData.mediciones);
+      }
+      
+      // Importar comentarios
+      if (firebaseData.comentarios) {
+        const { importCommentsFromFirebase } = await import('./repo.js');
+        await importCommentsFromFirebase(firebaseData.comentarios);
+      }
+      
+      // Cargar configuración de Firebase si existe
+      if (firebaseData.umbrales) {
+        await updateConfig({
+          umbralPhMin: firebaseData.umbrales.phMin,
+          umbralPhMax: firebaseData.umbrales.phMax,
+          umbralCondMin: firebaseData.umbrales.condMin,
+          umbralCondMax: firebaseData.umbrales.condMax,
+          umbralAmonioMin: firebaseData.umbrales.amonioMin || 0,
+          umbralAmonioMax: firebaseData.umbrales.amonioMax || 0.5,
+          umbralNitritoMin: firebaseData.umbrales.nitritoMin || 0,
+          umbralNitritoMax: firebaseData.umbrales.nitritoMax || 0.2,
+          umbralNitratoMin: firebaseData.umbrales.nitratoMin || 5,
+          umbralNitratoMax: firebaseData.umbrales.nitratoMax || 150
+        });
+      }
+      
+      if (firebaseData.nivel) {
+        await updateConfig({
+          minNivel: firebaseData.nivel.min,
+          maxNivel: firebaseData.nivel.max
+        });
+      }
+      
+      if (firebaseData.parametrosActivos) {
+        await updateConfig({
+          parametrosActivos: firebaseData.parametrosActivos
+        });
+      }
+      
+      console.log('✅ Datos cargados desde Firebase');
+    } else {
+      console.log('👤 Usuario nuevo, creando en Firebase...');
+      await syncAll(config);
+    }
+
+    // Recargar config después de importar
+    config = await getConfig();
+    
+    // VERIFICAR TÉRMINOS DESPUÉS DE CARGAR TODO
+    if (!config.terminosAceptados) {
+      console.log('⚠️ Usuario debe aceptar términos');
+      await showTermsAndConditions();
+      config = await getConfig(); // Recargar después de aceptar
+    }
+
+    // Ir al home
+    showView('home');
+    await loadHomeView();
+    setupNavigationHandlers();
+    setupMeasurementForms();
+    setupSettingsForm();
+    setupSyncButton();
+    applyTheme();
+    updateFormVisibility();
+  });
 }
 
 // ====== HOME ======
@@ -820,6 +835,7 @@ Al hacer clic en "Acepto y Continuar", confirma que ha leído y acepta estos té
     };
   });
 }
+
 
 
 
