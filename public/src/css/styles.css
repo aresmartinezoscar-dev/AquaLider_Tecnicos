@@ -1025,6 +1025,119 @@ body.dark-mode .card h3 {
   color: var(--color-primary-dark);
 }
 
+/* ====== DATOS HISTÓRICOS ====== */
+
+.historical-data-section {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border: 3px dashed #f59e0b;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-top: 32px;
+  margin-bottom: 24px;
+}
+
+body.dark-mode .historical-data-section {
+  background: linear-gradient(135deg, #451a03, #78350f);
+  border-color: #f59e0b;
+}
+
+.historical-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.historical-header svg {
+  width: 28px;
+  height: 28px;
+  color: #f59e0b;
+}
+
+.historical-header h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #92400e;
+  margin: 0;
+}
+
+body.dark-mode .historical-header h3 {
+  color: #fbbf24;
+}
+
+.historical-description {
+  font-size: 14px;
+  color: #92400e;
+  margin: 0 0 20px 40px;
+}
+
+body.dark-mode .historical-description {
+  color: #fcd34d;
+}
+
+.historical-form {
+  background: white;
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+body.dark-mode .historical-form {
+  background: var(--color-bg-secondary);
+}
+
+.historical-inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.historical-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.historical-field label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.historical-field input,
+.historical-field select {
+  padding: 12px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 16px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: inherit;
+}
+
+.historical-field input:focus,
+.historical-field select:focus {
+  outline: none;
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+.historical-form .btn-primary {
+  width: 100%;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.historical-form .btn-primary:hover {
+  background: linear-gradient(135deg, #d97706, #b45309);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .historical-inputs {
+    grid-template-columns: 1fr;
+  }
+}
 
 
 
