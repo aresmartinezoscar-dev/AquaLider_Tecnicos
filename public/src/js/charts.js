@@ -37,14 +37,16 @@ export function renderChart(canvasId, measurements, tipo, config = {}) {
   const values = sortedData.map(m => m.valor);
 
   // Determinar color según tipo
-  const colorMap = {
+const colorMap = {
     ph: '#8b5cf6',           // Púrpura
     temp: '#f59e0b',         // Naranja
     nivel: '#06b6d4',        // Cian
     conductividad: '#10b981', // Verde
+    dureza: '#a855f7',       // Violeta - NUEVO
     amonio: '#ef4444',       // Rojo
     nitrito: '#f97316',      // Naranja oscuro
     nitrato: '#22c55e',      // Verde claro
+    mortalidad: '#374151',   // Gris oscuro - NUEVO
     comida: '#ec4899'        // Rosa
   };
 
@@ -144,4 +146,5 @@ export function getCurrentChart() {
   return currentChart;
 
 }
+
 
