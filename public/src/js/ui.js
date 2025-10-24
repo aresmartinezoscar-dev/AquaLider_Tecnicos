@@ -728,7 +728,11 @@ async function showTermsAndConditions() {
     document.body.appendChild(banner);
     
     window.acceptTerms = async () => {
-      await updateConfig({ terminosAceptados: true });
+      const now = Date.now();
+      await updateConfig({ 
+        terminosAceptados: true,
+        terminosAceptadosTs: now // AÑADIR ESTO
+      });
       config = await getConfig();
       banner.remove();
       resolve(true);
@@ -789,7 +793,7 @@ Los cambios se notificarán dentro de la aplicación.
 
 9. CONTACTO
 Para preguntas sobre estos términos o el uso de datos:
-Email: acualider@support.com
+Email: adacolesal@gmail.com
 
 10. LEGISLACIÓN APLICABLE
 Estos términos se rigen por las leyes de Colombia.
@@ -801,6 +805,7 @@ Al hacer clic en "Acepto y Continuar", confirma que ha leído y acepta estos té
     };
   });
 }
+
 
 
 
