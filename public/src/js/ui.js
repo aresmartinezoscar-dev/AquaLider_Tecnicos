@@ -770,6 +770,18 @@ function updateFormVisibility() {
       tab.style.display = config.parametrosActivos[tipo] ? 'block' : 'none';
     }
   });
+  
+  // AÑADIR: Actualizar opciones del select de datos históricos
+  const historicalSelect = document.getElementById('historical-param');
+  if (historicalSelect && config.parametrosActivos) {
+    const options = historicalSelect.querySelectorAll('option[value]');
+    options.forEach(option => {
+      const tipo = option.value;
+      if (tipo && config.parametrosActivos[tipo] !== undefined) {
+        option.style.display = config.parametrosActivos[tipo] ? 'block' : 'none';
+      }
+    });
+  }
 }
 
 // ====== TÉRMINOS Y CONDICIONES ======
@@ -902,6 +914,7 @@ Al hacer clic en "Acepto y Continuar", confirma que ha leído y acepta estos té
     };
   });
 }
+
 
 
 
