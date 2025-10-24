@@ -10,30 +10,36 @@ let config = null;
 
 // Inicializar UI
 export async function initUI() {
-    config = await getConfig();
+  config = await getConfig();
 
-    // Si no hay userCode, mostrar pantalla de primer uso
-    if (!config.userCode) {
-        showView('first-run');
-        setupFirstRunForm();
-        return;
-    }
+  // Verificar términos y condiciones
+  if (!config.terminosAceptados) {
+    await showTermsAndConditions();
+  }
 
-    // Si hay userCode, ir al home
-    showView('home');
-    await loadHomeView();
-    setupNavigationHandlers();
-    setupMeasurementForms();
-    setupSettingsForm();
-    setupSyncButton();
-    applyTheme();
+  // Si no hay userCode, mostrar pantalla de primer uso
+  if (!config.userCode) {
+    showView('first-run');
+    setupFirstRunForm();
+    return;
+  }
 
-    // Intentar sincronizar automáticamente al iniciar
-    if (navigator.onLine) {
-        setTimeout(() => {
-            syncAll(config);
-        }, 2000);
-    }
+  // Si hay userCode, ir al home
+  showView('home');
+  await loadHomeView();
+  setupNavigationHandlers();
+  setupMeasurementForms();
+  setupSettingsForm();
+  setupSyncButton();
+  applyTheme();
+  updateFormVisibility(); // AÑADIR ESTO
+
+  // Intentar sincronizar automáticamente al iniciar
+  if (navigator.onLine) {
+    setTimeout(() => {
+      syncAll(config);
+    }, 2000);
+  }
 }
 
 // Mostrar/ocultar vistas
@@ -394,19 +400,19 @@ function loadSettingsView() {
     const form = document.getElementById('settings-form');
 
     // Cargar valores actuales
-    form.elements.umbralPhMin.value = config.umbralPhMin;
-    form.elements.umbralPhMax.value = config.umbralPhMax;
-    form.elements.umbralCondMin.value = config.umbralCondMin;
-    form.elements.umbralCondMax.value = config.umbralCondMax;
-    form.elements.umbralAmonioMin.value = config.umbralAmonioMin;
-    form.elements.umbralAmonioMax.value = config.umbralAmonioMax;
-    form.elements.umbralNitritoMin.value = config.umbralNitritoMin;
-    form.elements.umbralNitritoMax.value = config.umbralNitritoMax;
-    form.elements.umbralNitratoMin.value = config.umbralNitratoMin;
-    form.elements.umbralNitratoMax.value = config.umbralNitratoMax;
-    form.elements.minNivel.value = config.minNivel;
-    form.elements.maxNivel.value = config.maxNivel;
-    form.elements.unidadComida.value = config.unidadComida;
+    // form.elements.umbralPhMin.value = config.umbralPhMin;
+    // form.elements.umbralPhMax.value = config.umbralPhMax;
+    // form.elements.umbralCondMin.value = config.umbralCondMin;
+    // form.elements.umbralCondMax.value = config.umbralCondMax;
+    // form.elements.umbralAmonioMin.value = config.umbralAmonioMin;
+    // form.elements.umbralAmonioMax.value = config.umbralAmonioMax;
+    // form.elements.umbralNitritoMin.value = config.umbralNitritoMin;
+    // form.elements.umbralNitritoMax.value = config.umbralNitritoMax;
+    // form.elements.umbralNitratoMin.value = config.umbralNitratoMin;
+    // form.elements.umbralNitratoMax.value = config.umbralNitratoMax;
+    // form.elements.minNivel.value = config.minNivel;
+    // form.elements.maxNivel.value = config.maxNivel;
+   // form.elements.unidadComida.value = config.unidadComida;
     form.elements.modoOscuro.checked = config.modoOscuro;
 
     // // Cargar alarmas
@@ -674,6 +680,118 @@ function updateFormVisibility() {
     if (config.parametrosActivos && config.parametrosActivos[tipo] !== undefined) {
       tab.style.display = config.parametrosActivos[tipo] ? 'block' : 'none';
     }
+  });
+}
+
+// ====== TÉRMINOS Y CONDICIONES ======
+
+async function showTermsAndConditions() {
+  return new Promise((resolve) => {
+    const banner = document.createElement('div');
+    banner.id = 'terms-banner';
+    banner.innerHTML = `
+      <div id="terms-content">
+        <h2 style="color: var(--color-primary); margin-bottom: 20px; text-align: center;">
+          🐟 Bienvenido a AcuaLíder
+        </h2>
+        <div class="terms-text">
+          <p>
+            Al continuar usando esta aplicación, aceptas nuestros 
+            <span class="terms-link" onclick="showFullTerms()">Términos y Condiciones</span>.
+          </p>
+          <p style="margin-top: 16px;">
+            <strong>Resumen:</strong><br>
+            • No recopilamos datos personales identificables<br>
+            • Los datos de tu sistema se procesan de forma anónima<br>
+            • Contribuyes al desarrollo de la tecnología acuapónica mundial<br>
+            • Tus mediciones ayudan a mejorar prácticas sustentables
+          </p>
+        </div>
+        <div style="display: flex; gap: 12px; margin-top: 24px;">
+          <button class="btn btn-primary" onclick="acceptTerms()" style="flex: 1;">
+            ✅ Acepto y Continuar
+          </button>
+          <button class="btn btn-secondary" onclick="declineTerms()">
+            ❌ Rechazar
+          </button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(banner);
+    
+    window.acceptTerms = async () => {
+      await updateConfig({ terminosAceptados: true });
+      config = await getConfig();
+      banner.remove();
+      resolve(true);
+    };
+    
+    window.declineTerms = () => {
+      alert('Debes aceptar los términos para usar la aplicación.');
+    };
+    
+    window.showFullTerms = () => {
+      const fullTerms = `
+TÉRMINOS Y CONDICIONES DE USO - ACUALÍDER
+
+Última actualización: ${new Date().toLocaleDateString('es-CO')}
+
+1. ACEPTACIÓN DE TÉRMINOS
+Al utilizar AcuaLíder, usted acepta estar sujeto a estos Términos y Condiciones.
+
+2. USO DE DATOS
+2.1 Datos Anónimos: Todos los datos de mediciones (pH, temperatura, etc.) se procesan de forma anónima.
+2.2 Sin Datos Personales: No recopilamos nombre, email, ubicación exacta u otra información identificable.
+2.3 Código de Usuario: Su código de usuario es un identificador anónimo que no contiene información personal.
+
+3. PROPÓSITO DE LA RECOPILACIÓN
+Los datos anónimos se utilizan exclusivamente para:
+- Análisis estadístico agregado
+- Investigación en tecnología acuapónica
+- Mejora de prácticas sustentables
+- Desarrollo de estándares de la industria
+- Contribución al conocimiento científico global
+
+4. ALMACENAMIENTO Y SEGURIDAD
+4.1 Los datos se almacenan en Firebase (Google Cloud Platform)
+4.2 Se implementan medidas de seguridad estándar de la industria
+4.3 Los datos locales se almacenan en su dispositivo mediante IndexedDB
+
+5. PRIVACIDAD
+5.1 No vendemos datos a terceros
+5.2 No compartimos datos identificables
+5.3 Los análisis son siempre agregados y anónimos
+5.4 Cumplimos con estándares internacionales de protección de datos
+
+6. DERECHOS DEL USUARIO
+Usted tiene derecho a:
+- Dejar de usar la aplicación en cualquier momento
+- Solicitar información sobre el uso de datos anónimos
+- Eliminar su cuenta y datos asociados
+
+7. RESPONSABILIDAD
+7.1 La aplicación se proporciona "tal cual"
+7.2 No garantizamos resultados específicos en su sistema acuapónico
+7.3 Las mediciones son responsabilidad del usuario
+7.4 No nos hacemos responsables de pérdidas en su producción
+
+8. CAMBIOS EN LOS TÉRMINOS
+Nos reservamos el derecho de modificar estos términos en cualquier momento.
+Los cambios se notificarán dentro de la aplicación.
+
+9. CONTACTO
+Para preguntas sobre estos términos o el uso de datos:
+Email: acualider@support.com
+
+10. LEGISLACIÓN APLICABLE
+Estos términos se rigen por las leyes de Colombia.
+
+Al hacer clic en "Acepto y Continuar", confirma que ha leído y acepta estos términos.
+      `;
+      
+      alert(fullTerms);
+    };
   });
 }
 
