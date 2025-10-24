@@ -48,7 +48,9 @@ export async function initUI() {
   if (config.parametrosActivos) {
     updateFormVisibility();
   }
-
+  // AÑADIR ESTO:
+  initUserManagement();
+  
   if (navigator.onLine) {
     setTimeout(() => {
       syncAll(config);
@@ -1159,3 +1161,4 @@ const addUserFormSetup = () => {
 export function initUserManagement() {
   setupUserManagement();
 }
+
