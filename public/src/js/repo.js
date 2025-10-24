@@ -122,7 +122,7 @@ export async function clearSyncedItems() {
 // ====== ÚLTIMOS VALORES ======
 
 export async function getLastValues() {
-  const types = ['ph', 'temp', 'nivel', 'conductividad', 'amonio', 'nitrito', 'nitrato', 'comida'];
+  const types = ['ph', 'temp', 'nivel', 'conductividad', 'dureza', 'amonio', 'nitrito', 'nitrato', 'mortalidad', 'comida'];
   const lastValues = {};
 
   for (const tipo of types) {
@@ -278,4 +278,5 @@ export async function importCommentsFromFirebase(firebaseComentarios) {
   console.log(`📥 Total importados: ${imported} comentarios desde Firebase`);
   return imported;
 }
+
 
