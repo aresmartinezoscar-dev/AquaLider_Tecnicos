@@ -244,6 +244,7 @@ function setupNavigationHandlers() {
                 await loadHomeView();
             } else if (view === 'add') {
                 showView('add');
+                setupHistoricalDateLimit(); // AÑADIR ESTO
             } else if (view === 'history') {
                 showView('history');
                 await loadHistoryView();
@@ -923,22 +924,3 @@ function setupHistoricalDateLimit() {
     dateInput.setAttribute('max', today);
   }
 }
-
-// Llamar cuando se muestra la vista de añadir
-// AÑADIR en setupNavigationHandlers() cuando view === 'add':
-      } else if (view === 'add') {
-        showView('add');
-        setupHistoricalDateLimit(); // AÑADIR ESTO
-      }
-
-
-
-
-
-
-
-
-
-
-
-
