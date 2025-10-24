@@ -887,9 +887,15 @@ body.dark-mode .card h3 {
 .modal-footer {
   padding: 20px;
   border-top: 2px solid var(--color-border);
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
   gap: 12px;
-  justify-content: flex-end;
+}
+
+.modal-footer .btn-primary,
+.modal-footer .btn-secondary {
+  width: 100%;
+  margin: 0; /* Eliminar márgenes */
 }
 
 .checkbox-label {
@@ -1018,6 +1024,7 @@ body.dark-mode .card h3 {
 .terms-link:hover {
   color: var(--color-primary-dark);
 }
+
 
 
 
