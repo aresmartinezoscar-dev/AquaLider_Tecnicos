@@ -55,6 +55,9 @@ export const defaultUserConfig = {
   // 
   },
   modoOscuro: false,
-  terminosAceptados: false // ASEGÚRATE QUE ESTÁ AQUÍ
+  terminosAceptados: false, // ASEGÚRATE QUE ESTÁ AQUÍ
+  terminosAceptadosTs: null // AÑADIR ESTO
+
 };
+
 
