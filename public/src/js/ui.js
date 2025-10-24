@@ -12,6 +12,13 @@ let config = null;
 export async function initUI() {
   config = await getConfig();
 
+  
+  // Si no hay userCode, mostrar pantalla de primer uso
+  if (!config.userCode) {
+    showView('first-run');
+    setupFirstRunForm();
+    return;
+  }
   // Verificar términos y condiciones
   if (!config.terminosAceptados) {
     await showTermsAndConditions();
@@ -794,6 +801,7 @@ Al hacer clic en "Acepto y Continuar", confirma que ha leído y acepta estos té
     };
   });
 }
+
 
 
 
