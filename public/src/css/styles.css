@@ -1139,6 +1139,125 @@ body.dark-mode .historical-form {
   }
 }
 
+/* Botón de usuarios */
+.users-button {
+  position: fixed;
+  top: 70px;
+  left: 20px;
+  z-index: 997;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: white;
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.users-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+}
+
+.users-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+#current-user-display {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Lista de usuarios */
+.users-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.user-item {
+  background: var(--color-bg);
+  padding: 16px;
+  border-radius: var(--radius);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+}
+
+.user-item:hover {
+  background: var(--color-border);
+  transform: translateX(4px);
+}
+
+.user-item.active {
+  border-color: var(--color-primary);
+  background: rgba(6, 182, 212, 0.1);
+}
+
+.user-item-info {
+  flex: 1;
+}
+
+.user-item-code {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+
+.user-item-name {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.user-item-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.user-item-delete {
+  background: var(--color-danger);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.user-item-delete:hover {
+  opacity: 0.8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .users-button {
+    top: 60px;
+    left: 10px;
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+  
+  #current-user-display {
+    max-width: 80px;
+  }
+}
+
 
 
 
