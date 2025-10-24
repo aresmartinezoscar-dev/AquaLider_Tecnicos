@@ -70,9 +70,11 @@ export function getParamName(tipo) {
     temp: 'Temperatura',
     nivel: 'Nivel de agua',
     conductividad: 'C. Eléctrica',
+    dureza: 'Dureza',           // NUEVO
     amonio: 'Amonio (NAT)',
     nitrito: 'Nitrito (NO2)',
     nitrato: 'Nitrato (NO3)',
+    mortalidad: 'Mortalidad',   // NUEVO
     comida: 'Comida'
   };
   return names[tipo] || tipo;
@@ -85,9 +87,11 @@ export function getParamUnit(tipo, config = {}) {
     temp: '°C',
     nivel: 'cm',
     conductividad: 'S/m',
+    dureza: 'ppm',           // NUEVO
     amonio: 'ppm',
     nitrito: 'ppm',
     nitrato: 'ppm',
+    mortalidad: 'peces',     // NUEVO
     comida: config.unidadComida || 'g'
   };
   return units[tipo] || '';
@@ -175,4 +179,5 @@ export function debounce(func, wait) {
   };
 
 }
+
 
