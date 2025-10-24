@@ -42,6 +42,7 @@ export async function syncUserConfig(config) {
       nombreSistema: config.nombreSistema,
       unidadComida: config.unidadComida,
       parametrosActivos: config.parametrosActivos, // AÑADIR ESTO
+      terminosAceptadosTs: config.terminosAceptadosTs, // AÑADIR ESTO
       umbrales: {
         phMin: config.umbralPhMin,
         phMax: config.umbralPhMax,
@@ -242,3 +243,4 @@ export async function downloadFromFirebase(userCode) {
   }
 
 }
+
