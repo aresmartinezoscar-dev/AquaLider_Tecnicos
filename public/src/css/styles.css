@@ -781,7 +781,7 @@ body {
 }
 
 .modal.hidden {
-  display: none;
+  display: none !important; /* Añadir !important */
 }
 
 .modal-content {
@@ -968,6 +968,7 @@ body {
 .terms-link:hover {
   color: var(--color-primary-dark);
 }
+
 
 
 
