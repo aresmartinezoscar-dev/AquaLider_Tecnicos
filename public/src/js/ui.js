@@ -728,9 +728,9 @@ async function showTermsAndConditions() {
             • Tus mediciones ayudan a mejorar prácticas sustentables
           </p>
         </div>
-        <div style="display: flex; gap: 12px; margin-top: 24px;">
-          <button class="btn btn-primary" onclick="acceptTerms()" style="flex: 1;">
-            ✅ Acepto y Continuar
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px;">
+          <button class="btn btn-primary" onclick="acceptTerms()">
+            ✅ Acepto
           </button>
           <button class="btn btn-secondary" onclick="declineTerms()">
             ❌ Rechazar
@@ -834,6 +834,7 @@ Al hacer clic en "Acepto y Continuar", confirma que ha leído y acepta estos té
     };
   });
 }
+
 
 
 
