@@ -1,6 +1,7 @@
 import { saveToStore, getFromStore, getAllFromStore, getByIndex, deleteFromStore, cleanOldRecords, getDB } from './db.js';
 import { defaultUserConfig } from './config.js';
 import { formatDateISO } from './util.js';
+export { getFromStore, saveToStore, getAllFromStore } from './db.js';
 
 // ====== CONFIGURACIÓN ======
 
@@ -422,3 +423,4 @@ export async function getPendingSync() {
   const queue = await getAllFromStore('sync_queue');
   return queue.filter(item => !item.synced && item.userCode === userCode);
 }
+
