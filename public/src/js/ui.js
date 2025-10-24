@@ -3,6 +3,7 @@ import { checkThreshold, showAlert, hideAlert, checkAlertResolution } from './al
 import { renderChart, destroyChart } from './charts.js';
 import { syncAll, initFirebase } from './firebase-sync.js';
 import { generateUUID, formatDateTime, formatDateISO, calculateTrend, getTrendIcon, getTrendColor, getParamName, getParamUnit, exportToCSV } from './util.js';
+import { setCurrentUser, getCurrentUser, saveLocalUser, getAllLocalUsers, updateUserLastAccess, deleteLocalUser } from './repo.js';
 
 let currentView = 'home';
 let currentParam = 'ph';
@@ -12,21 +13,30 @@ let config = null;
 export async function initUI() {
   config = await getConfig();
 
-  // Si no hay userCode, mostrar pantalla de primer uso
-  if (!config.userCode) {
+  // Cargar usuarios locales
+  const localUsers = await getAllLocalUsers();
+  
+  if (localUsers.length === 0) {
+    // No hay usuarios, mostrar pantalla de primer uso
     showView('first-run');
     setupFirstRunForm();
     return;
   }
-
-  // VERIFICAR TÉRMINOS ANTES DE MOSTRAR NADA
+  
+  // Hay usuarios, cargar el último usado
+  const lastUser = localUsers[0]; // Ya están ordenados por lastAccess
+  await switchToUser(lastUser.userCode);
+  
+  // Actualizar display del usuario actual
+  updateCurrentUserDisplay();
+  
+  // VERIFICAR TÉRMINOS
   if (!config.terminosAceptados) {
     console.log('⚠️ Términos no aceptados, mostrando aviso...');
     await showTermsAndConditions();
-    config = await getConfig(); // Recargar config
+    config = await getConfig();
   }
 
-  // Si hay userCode, ir al home
   showView('home');
   await loadHomeView();
   setupNavigationHandlers();
@@ -35,17 +45,16 @@ export async function initUI() {
   setupSyncButton();
   applyTheme();
   
-  // Actualizar visibilidad de formularios
   if (config.parametrosActivos) {
     updateFormVisibility();
   }
 
-  // Intentar sincronizar automáticamente al iniciar
   if (navigator.onLine) {
     setTimeout(() => {
       syncAll(config);
     }, 2000);
   }
+}
 }
 
 // Mostrar/ocultar vistas
@@ -76,20 +85,26 @@ function setupFirstRunForm() {
       return;
     }
 
-    // Generar deviceId único
     const deviceId = generateUUID();
 
-    // Actualizar configuración
+    // GUARDAR USUARIO LOCAL
+    await saveLocalUser({
+      userCode,
+      nombreSistema: systemName,
+      deviceId
+    });
+    
+    // Establecer como usuario actual
+    setCurrentUser(userCode);
+
     await updateConfig({
       userCode,
       nombreSistema: systemName,
       deviceId
     });
 
-    // Recargar config
     config = await getConfig();
 
-    // Inicializar Firebase
     initFirebase();
     
     // Verificar si el usuario existe en Firebase y cargar datos
@@ -170,6 +185,7 @@ function setupFirstRunForm() {
     // Ir al home
     showView('home');
     await loadHomeView();
+    updateCurrentUserDisplay(); // AÑADIR ESTO
     setupNavigationHandlers();
     setupMeasurementForms();
     setupSettingsForm();
@@ -924,3 +940,226 @@ function setupHistoricalDateLimit() {
     dateInput.setAttribute('max', today);
   }
 }
+
+// AÑADIR funciones de gestión de usuarios:
+
+function updateCurrentUserDisplay() {
+  const display = document.getElementById('current-user-display');
+  if (display && config) {
+    display.textContent = config.nombreSistema || config.userCode;
+  }
+}
+
+window.showUsersModal = async function() {
+  const modal = document.getElementById('users-modal');
+  const usersList = document.getElementById('users-list');
+  
+  const users = await getAllLocalUsers();
+  const currentUser = getCurrentUser();
+  
+  usersList.innerHTML = users.map(user => `
+    <div class="user-item ${user.userCode === currentUser ? 'active' : ''}" onclick="switchUserFromModal('${user.userCode}')">
+      <div class="user-item-info">
+        <div class="user-item-code">${user.userCode}</div>
+        <div class="user-item-name">${user.nombreSistema || 'Sin nombre'}</div>
+      </div>
+      <div class="user-item-actions">
+        <button class="user-item-delete" onclick="event.stopPropagation(); deleteUser('${user.userCode}')">
+          🗑️
+        </button>
+      </div>
+    </div>
+  `).join('');
+  
+  modal.classList.remove('hidden');
+};
+
+window.closeUsersModal = function() {
+  document.getElementById('users-modal').classList.add('hidden');
+};
+
+window.switchUserFromModal = async function(userCode) {
+  await switchToUser(userCode);
+  closeUsersModal();
+  
+  // Recargar toda la interfaz
+  await loadHomeView();
+  updateCurrentUserDisplay();
+  
+  showToast(`✅ Cambiado a: ${config.nombreSistema || userCode}`);
+};
+
+async function switchToUser(userCode) {
+  // Cambiar usuario actual
+  setCurrentUser(userCode);
+  
+  // Actualizar último acceso
+  await updateUserLastAccess(userCode);
+  
+  // Cargar configuración del usuario
+  const storedConfig = await getFromStore('config', userCode);
+  if (storedConfig) {
+    config = storedConfig;
+  } else {
+    // Usuario nuevo sin config, crear una
+    config = { ...defaultUserConfig, id: userCode, userCode };
+    await saveToStore('config', config);
+  }
+  
+  console.log('👤 Usuario actual:', userCode);
+}
+
+window.deleteUser = async function(userCode) {
+  const confirm = window.confirm(`¿Eliminar usuario "${userCode}"?\n\nSe borrarán todos sus datos locales.`);
+  
+  if (!confirm) return;
+  
+  await deleteLocalUser(userCode);
+  
+  // Si era el usuario actual, cambiar a otro
+  const currentUser = getCurrentUser();
+  if (currentUser === userCode) {
+    const users = await getAllLocalUsers();
+    if (users.length > 0) {
+      await switchToUser(users[0].userCode);
+      await loadHomeView();
+      updateCurrentUserDisplay();
+    } else {
+      // No quedan usuarios, volver a primer uso
+      location.reload();
+    }
+  }
+  
+  showToast('🗑️ Usuario eliminado');
+  showUsersModal(); // Refrescar lista
+};
+
+window.showAddUserForm = function() {
+  closeUsersModal();
+  document.getElementById('add-user-modal').classList.remove('hidden');
+};
+
+window.closeAddUserModal = function() {
+  document.getElementById('add-user-modal').classList.add('hidden');
+  document.getElementById('add-user-form').reset();
+};
+
+// Setup del formulario de añadir usuario
+document.addEventListener('DOMContentLoaded', () => {
+  const addUserForm = document.getElementById('add-user-form');
+  if (addUserForm) {
+    addUserForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const userCode = document.getElementById('new-user-code').value.trim();
+      const userName = document.getElementById('new-user-name').value.trim();
+      
+      if (!userCode) {
+        alert('Ingresa un código de usuario');
+        return;
+      }
+      
+      // Verificar si ya existe
+      const existing = await getFromStore('usuarios_locales', userCode);
+      if (existing) {
+        alert('Este usuario ya existe');
+        return;
+      }
+      
+      // Crear usuario
+      const deviceId = generateUUID();
+      await saveLocalUser({
+        userCode,
+        nombreSistema: userName,
+        deviceId
+      });
+      
+      // Crear configuración
+      const newConfig = {
+        ...defaultUserConfig,
+        id: userCode,
+        userCode,
+        nombreSistema: userName,
+        deviceId
+      };
+      await saveToStore('config', newConfig);
+      
+      // Cambiar a ese usuario
+      await switchToUser(userCode);
+      
+      closeAddUserModal();
+      showToast(`✅ Usuario "${userCode}" añadido`);
+      
+      // Cargar datos de Firebase si existen
+      const { downloadFromFirebase } = await import('./firebase-sync.js');
+      const firebaseData = await downloadFromFirebase(userCode);
+      
+      if (firebaseData) {
+        showToast('📥 Cargando datos de Firebase...');
+        // Cargar datos de Firebase si existen
+      const { downloadFromFirebase } = await import('./firebase-sync.js');
+      const firebaseData = await downloadFromFirebase(userCode);
+      
+      if (firebaseData) {
+        showToast('📥 Cargando datos de Firebase...');
+        
+        // CARGAR ESTADO DE TÉRMINOS DESDE FIREBASE
+        if (firebaseData.terminosAceptados !== undefined) {
+          await updateConfig({
+            terminosAceptados: firebaseData.terminosAceptados,
+            terminosAceptadosTs: firebaseData.terminosAceptadosTs || null
+          });
+          console.log('✅ Términos cargados:', firebaseData.terminosAceptados);
+        }
+        
+        // Importar mediciones
+        if (firebaseData.mediciones) {
+          const { importMeasurementsFromFirebase } = await import('./repo.js');
+          await importMeasurementsFromFirebase(firebaseData.mediciones);
+        }
+        
+        // Importar comentarios
+        if (firebaseData.comentarios) {
+          const { importCommentsFromFirebase } = await import('./repo.js');
+          await importCommentsFromFirebase(firebaseData.comentarios);
+        }
+        
+        // Cargar configuración de Firebase si existe
+        if (firebaseData.umbrales) {
+          await updateConfig({
+            umbralPhMin: firebaseData.umbrales.phMin,
+            umbralPhMax: firebaseData.umbrales.phMax,
+            umbralCondMin: firebaseData.umbrales.condMin,
+            umbralCondMax: firebaseData.umbrales.condMax,
+            umbralAmonioMin: firebaseData.umbrales.amonioMin || 0,
+            umbralAmonioMax: firebaseData.umbrales.amonioMax || 0.5,
+            umbralNitritoMin: firebaseData.umbrales.nitritoMin || 0,
+            umbralNitritoMax: firebaseData.umbrales.nitritoMax || 0.2,
+            umbralNitratoMin: firebaseData.umbrales.nitratoMin || 5,
+            umbralNitratoMax: firebaseData.umbrales.nitratoMax || 150
+          });
+        }
+        
+        if (firebaseData.nivel) {
+          await updateConfig({
+            minNivel: firebaseData.nivel.min,
+            maxNivel: firebaseData.nivel.max
+          });
+        }
+        
+        if (firebaseData.parametrosActivos) {
+          await updateConfig({
+            parametrosActivos: firebaseData.parametrosActivos
+          });
+        }
+        
+        console.log('✅ Datos cargados desde Firebase');
+      }
+      }
+      
+      await loadHomeView();
+      updateCurrentUserDisplay();
+    });
+  }
+});
+
