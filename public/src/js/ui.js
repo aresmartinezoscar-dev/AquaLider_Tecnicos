@@ -941,7 +941,7 @@ function setupHistoricalDateLimit() {
   }
 }
 
-// AÑADIR funciones de gestión de usuarios:
+// ====== GESTIÓN DE USUARIOS ======
 
 function updateCurrentUserDisplay() {
   const display = document.getElementById('current-user-display');
@@ -951,27 +951,41 @@ function updateCurrentUserDisplay() {
 }
 
 window.showUsersModal = async function() {
+  console.log('🔘 Abriendo modal de usuarios'); // DEBUG
+  
   const modal = document.getElementById('users-modal');
+  if (!modal) {
+    console.error('❌ Modal no encontrado');
+    return;
+  }
+  
   const usersList = document.getElementById('users-list');
   
   const users = await getAllLocalUsers();
   const currentUser = getCurrentUser();
   
-  usersList.innerHTML = users.map(user => `
-    <div class="user-item ${user.userCode === currentUser ? 'active' : ''}" onclick="switchUserFromModal('${user.userCode}')">
-      <div class="user-item-info">
-        <div class="user-item-code">${user.userCode}</div>
-        <div class="user-item-name">${user.nombreSistema || 'Sin nombre'}</div>
+  console.log('👥 Usuarios encontrados:', users); // DEBUG
+  
+  if (users.length === 0) {
+    usersList.innerHTML = '<p style="text-align: center; color: var(--color-text-secondary); padding: 20px;">No hay usuarios guardados</p>';
+  } else {
+    usersList.innerHTML = users.map(user => `
+      <div class="user-item ${user.userCode === currentUser ? 'active' : ''}" onclick="switchUserFromModal('${user.userCode}')">
+        <div class="user-item-info">
+          <div class="user-item-code">${user.userCode}</div>
+          <div class="user-item-name">${user.nombreSistema || 'Sin nombre'}</div>
+        </div>
+        <div class="user-item-actions">
+          <button class="user-item-delete" onclick="event.stopPropagation(); deleteUser('${user.userCode}')">
+            🗑️
+          </button>
+        </div>
       </div>
-      <div class="user-item-actions">
-        <button class="user-item-delete" onclick="event.stopPropagation(); deleteUser('${user.userCode}')">
-          🗑️
-        </button>
-      </div>
-    </div>
-  `).join('');
+    `).join('');
+  }
   
   modal.classList.remove('hidden');
+  console.log('✅ Modal abierto'); // DEBUG
 };
 
 window.closeUsersModal = function() {
@@ -979,10 +993,10 @@ window.closeUsersModal = function() {
 };
 
 window.switchUserFromModal = async function(userCode) {
+  console.log('🔄 Cambiando a usuario:', userCode); // DEBUG
   await switchToUser(userCode);
   closeUsersModal();
   
-  // Recargar toda la interfaz
   await loadHomeView();
   updateCurrentUserDisplay();
   
@@ -990,18 +1004,13 @@ window.switchUserFromModal = async function(userCode) {
 };
 
 async function switchToUser(userCode) {
-  // Cambiar usuario actual
   setCurrentUser(userCode);
-  
-  // Actualizar último acceso
   await updateUserLastAccess(userCode);
   
-  // Cargar configuración del usuario
   const storedConfig = await getFromStore('config', userCode);
   if (storedConfig) {
     config = storedConfig;
   } else {
-    // Usuario nuevo sin config, crear una
     config = { ...defaultUserConfig, id: userCode, userCode };
     await saveToStore('config', config);
   }
@@ -1010,13 +1019,12 @@ async function switchToUser(userCode) {
 }
 
 window.deleteUser = async function(userCode) {
-  const confirm = window.confirm(`¿Eliminar usuario "${userCode}"?\n\nSe borrarán todos sus datos locales.`);
+  const confirmDelete = window.confirm(`¿Eliminar usuario "${userCode}"?\n\nSe borrarán todos sus datos locales.`);
   
-  if (!confirm) return;
+  if (!confirmDelete) return;
   
   await deleteLocalUser(userCode);
   
-  // Si era el usuario actual, cambiar a otro
   const currentUser = getCurrentUser();
   if (currentUser === userCode) {
     const users = await getAllLocalUsers();
@@ -1025,16 +1033,16 @@ window.deleteUser = async function(userCode) {
       await loadHomeView();
       updateCurrentUserDisplay();
     } else {
-      // No quedan usuarios, volver a primer uso
       location.reload();
     }
   }
   
   showToast('🗑️ Usuario eliminado');
-  showUsersModal(); // Refrescar lista
+  showUsersModal();
 };
 
 window.showAddUserForm = function() {
+  console.log('➕ Abriendo formulario de añadir'); // DEBUG
   closeUsersModal();
   document.getElementById('add-user-modal').classList.remove('hidden');
 };
@@ -1044,8 +1052,8 @@ window.closeAddUserModal = function() {
   document.getElementById('add-user-form').reset();
 };
 
-// Setup del formulario de añadir usuario
-document.addEventListener('DOMContentLoaded', () => {
+// Setup formulario añadir usuario
+const addUserFormSetup = () => {
   const addUserForm = document.getElementById('add-user-form');
   if (addUserForm) {
     addUserForm.addEventListener('submit', async (e) => {
@@ -1059,14 +1067,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       
-      // Verificar si ya existe
       const existing = await getFromStore('usuarios_locales', userCode);
       if (existing) {
         alert('Este usuario ya existe');
         return;
       }
       
-      // Crear usuario
       const deviceId = generateUUID();
       await saveLocalUser({
         userCode,
@@ -1074,7 +1080,6 @@ document.addEventListener('DOMContentLoaded', () => {
         deviceId
       });
       
-      // Crear configuración
       const newConfig = {
         ...defaultUserConfig,
         id: userCode,
@@ -1084,7 +1089,6 @@ document.addEventListener('DOMContentLoaded', () => {
       };
       await saveToStore('config', newConfig);
       
-      // Cambiar a ese usuario
       await switchToUser(userCode);
       
       closeAddUserModal();
@@ -1096,35 +1100,24 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if (firebaseData) {
         showToast('📥 Cargando datos de Firebase...');
-        // Cargar datos de Firebase si existen
-      const { downloadFromFirebase } = await import('./firebase-sync.js');
-      const firebaseData = await downloadFromFirebase(userCode);
-      
-      if (firebaseData) {
-        showToast('📥 Cargando datos de Firebase...');
         
-        // CARGAR ESTADO DE TÉRMINOS DESDE FIREBASE
         if (firebaseData.terminosAceptados !== undefined) {
           await updateConfig({
             terminosAceptados: firebaseData.terminosAceptados,
             terminosAceptadosTs: firebaseData.terminosAceptadosTs || null
           });
-          console.log('✅ Términos cargados:', firebaseData.terminosAceptados);
         }
         
-        // Importar mediciones
         if (firebaseData.mediciones) {
           const { importMeasurementsFromFirebase } = await import('./repo.js');
           await importMeasurementsFromFirebase(firebaseData.mediciones);
         }
         
-        // Importar comentarios
         if (firebaseData.comentarios) {
           const { importCommentsFromFirebase } = await import('./repo.js');
           await importCommentsFromFirebase(firebaseData.comentarios);
         }
         
-        // Cargar configuración de Firebase si existe
         if (firebaseData.umbrales) {
           await updateConfig({
             umbralPhMin: firebaseData.umbrales.phMin,
@@ -1155,11 +1148,16 @@ document.addEventListener('DOMContentLoaded', () => {
         
         console.log('✅ Datos cargados desde Firebase');
       }
-      }
       
       await loadHomeView();
       updateCurrentUserDisplay();
     });
   }
-});
+};
 
+// Ejecutar cuando el DOM esté listo
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', addUserFormSetup);
+} else {
+  addUserFormSetup();
+}
