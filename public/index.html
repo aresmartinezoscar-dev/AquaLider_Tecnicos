@@ -319,164 +319,7 @@
                     </button>
                 </div>
 
-                <!-- Modal de selección de parámetros -->
-                <div id="parameter-modal" class="modal hidden">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3>Seleccionar Parámetros</h3>
-                            <button class="modal-close" onclick="closeParameterModal()">✕</button>
-                        </div>
-                        <div class="modal-body">
-                            <p style="color: var(--color-text-secondary); margin-bottom: 16px;">
-                                Marca los parámetros que quieres medir:
-                            </p>
-
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="param-ph" checked disabled>
-                                <span>pH (obligatorio)</span>
-                            </label>
-
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="param-temp">
-                                <span>Temperatura</span>
-                            </label>
-
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="param-nivel">
-                                <span>Nivel de agua</span>
-                            </label>
-
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="param-conductividad">
-                                <span>Conductividad Eléctrica</span>
-                            </label>
-
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="param-dureza">
-                                <span>Dureza</span>
-                            </label>
-
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="param-amonio" checked disabled>
-                                <span>Amonio (NAT) (obligatorio)</span>
-                            </label>
-
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="param-nitrito" checked disabled>
-                                <span>Nitrito (NO2) (obligatorio)</span>
-                            </label>
-
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="param-nitrato" checked disabled>
-                                <span>Nitrato (NO3) (obligatorio)</span>
-                            </label>
-
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="param-mortalidad" checked disabled>
-                                <span>Mortalidad (obligatorio)</span>
-                            </label>
-
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="param-comida" checked disabled>
-                                <span>Comida administrada (obligatorio)</span>
-                            </label>
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-primary" onclick="saveParameterSelection()">Guardar</button>
-                            <button class="btn btn-secondary" onclick="closeParameterModal()">Cancelar</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Modal de umbrales -->
-                <div id="threshold-modal" class="modal hidden">
-                    <div class="modal-content threshold-modal-content">
-                        <div class="modal-header">
-                            <h3>Ajustar Umbrales</h3>
-                            <button class="modal-close" onclick="closeThresholdModal()">✕</button>
-                        </div>
-                        <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
-
-                            <div class="threshold-section">
-                                <h4>pH</h4>
-                                <div class="settings-row">
-                                    <label>Mínimo</label>
-                                    <input type="number" step="0.1" name="umbralPhMin" required>
-                                </div>
-                                <div class="settings-row">
-                                    <label>Máximo</label>
-                                    <input type="number" step="0.1" name="umbralPhMax" required>
-                                </div>
-                            </div>
-
-                            <div class="threshold-section">
-                                <h4>Conductividad Eléctrica</h4>
-                                <div class="settings-row">
-                                    <label>Mínimo (S/m)</label>
-                                    <input type="number" step="0.01" name="umbralCondMin" required>
-                                </div>
-                                <div class="settings-row">
-                                    <label>Máximo (S/m)</label>
-                                    <input type="number" step="0.01" name="umbralCondMax" required>
-                                </div>
-                            </div>
-
-                            <div class="threshold-section">
-                                <h4>Amonio (NAT)</h4>
-                                <div class="settings-row">
-                                    <label>Mínimo (ppm)</label>
-                                    <input type="number" step="0.01" name="umbralAmonioMin" required>
-                                </div>
-                                <div class="settings-row">
-                                    <label>Máximo (ppm)</label>
-                                    <input type="number" step="0.01" name="umbralAmonioMax" required>
-                                </div>
-                            </div>
-
-                            <div class="threshold-section">
-                                <h4>Nitrito (NO2)</h4>
-                                <div class="settings-row">
-                                    <label>Mínimo (ppm)</label>
-                                    <input type="number" step="0.01" name="umbralNitritoMin" required>
-                                </div>
-                                <div class="settings-row">
-                                    <label>Máximo (ppm)</label>
-                                    <input type="number" step="0.01" name="umbralNitritoMax" required>
-                                </div>
-                            </div>
-
-                            <div class="threshold-section">
-                                <h4>Nitrato (NO3)</h4>
-                                <div class="settings-row">
-                                    <label>Mínimo (ppm)</label>
-                                    <input type="number" step="0.1" name="umbralNitratoMin" required>
-                                </div>
-                                <div class="settings-row">
-                                    <label>Máximo (ppm)</label>
-                                    <input type="number" step="0.1" name="umbralNitratoMax" required>
-                                </div>
-                            </div>
-
-                            <div class="threshold-section">
-                                <h4>Nivel de Agua</h4>
-                                <div class="settings-row">
-                                    <label>Mínimo (cm)</label>
-                                    <input type="number" name="minNivel" required>
-                                </div>
-                                <div class="settings-row">
-                                    <label>Máximo (cm)</label>
-                                    <input type="number" name="maxNivel" required>
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-primary" onclick="saveThresholdSettings()">Guardar</button>
-                            <button class="btn btn-secondary" onclick="closeThresholdModal()">Cancelar</button>
-                        </div>
-                    </div>
-                </div>
-
+                
                 <h3>Unidad de comida</h3>
                 <select name="unidadComida">
                     <option value="g">Gramos (g)</option>
@@ -505,6 +348,165 @@
 
         
     </div>
+
+    <!-- Modal de selección de parámetros -->
+    <div id="parameter-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Seleccionar Parámetros</h3>
+                <button class="modal-close" onclick="closeParameterModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--color-text-secondary); margin-bottom: 16px;">
+                    Marca los parámetros que quieres medir:
+                </p>
+    
+                <label class="checkbox-label">
+                    <input type="checkbox" name="param-ph" checked disabled>
+                    <span>pH (obligatorio)</span>
+                </label>
+    
+                <label class="checkbox-label">
+                    <input type="checkbox" name="param-temp">
+                    <span>Temperatura</span>
+                </label>
+    
+                <label class="checkbox-label">
+                    <input type="checkbox" name="param-nivel">
+                    <span>Nivel de agua</span>
+                </label>
+    
+                <label class="checkbox-label">
+                    <input type="checkbox" name="param-conductividad">
+                    <span>Conductividad Eléctrica</span>
+                </label>
+    
+                <label class="checkbox-label">
+                    <input type="checkbox" name="param-dureza">
+                    <span>Dureza</span>
+                </label>
+    
+                <label class="checkbox-label">
+                    <input type="checkbox" name="param-amonio" checked disabled>
+                    <span>Amonio (NAT) (obligatorio)</span>
+                </label>
+    
+                <label class="checkbox-label">
+                    <input type="checkbox" name="param-nitrito" checked disabled>
+                    <span>Nitrito (NO2) (obligatorio)</span>
+                </label>
+    
+                <label class="checkbox-label">
+                    <input type="checkbox" name="param-nitrato" checked disabled>
+                    <span>Nitrato (NO3) (obligatorio)</span>
+                </label>
+    
+                <label class="checkbox-label">
+                    <input type="checkbox" name="param-mortalidad" checked disabled>
+                    <span>Mortalidad (obligatorio)</span>
+                </label>
+    
+                <label class="checkbox-label">
+                    <input type="checkbox" name="param-comida" checked disabled>
+                    <span>Comida administrada (obligatorio)</span>
+                </label>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="saveParameterSelection()">Guardar</button>
+                <button class="btn btn-secondary" onclick="closeParameterModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de umbrales -->
+    <div id="threshold-modal" class="modal hidden">
+        <div class="modal-content threshold-modal-content">
+            <div class="modal-header">
+                <h3>Ajustar Umbrales</h3>
+                <button class="modal-close" onclick="closeThresholdModal()">✕</button>
+            </div>
+            <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
+    
+                <div class="threshold-section">
+                    <h4>pH</h4>
+                    <div class="settings-row">
+                        <label>Mínimo</label>
+                        <input type="number" step="0.1" name="umbralPhMin" required>
+                    </div>
+                    <div class="settings-row">
+                        <label>Máximo</label>
+                        <input type="number" step="0.1" name="umbralPhMax" required>
+                    </div>
+                </div>
+    
+                <div class="threshold-section">
+                    <h4>Conductividad Eléctrica</h4>
+                    <div class="settings-row">
+                        <label>Mínimo (S/m)</label>
+                        <input type="number" step="0.01" name="umbralCondMin" required>
+                    </div>
+                    <div class="settings-row">
+                        <label>Máximo (S/m)</label>
+                        <input type="number" step="0.01" name="umbralCondMax" required>
+                    </div>
+                </div>
+    
+                <div class="threshold-section">
+                    <h4>Amonio (NAT)</h4>
+                    <div class="settings-row">
+                        <label>Mínimo (ppm)</label>
+                        <input type="number" step="0.01" name="umbralAmonioMin" required>
+                    </div>
+                    <div class="settings-row">
+                        <label>Máximo (ppm)</label>
+                        <input type="number" step="0.01" name="umbralAmonioMax" required>
+                    </div>
+                </div>
+    
+                <div class="threshold-section">
+                    <h4>Nitrito (NO2)</h4>
+                    <div class="settings-row">
+                        <label>Mínimo (ppm)</label>
+                        <input type="number" step="0.01" name="umbralNitritoMin" required>
+                    </div>
+                    <div class="settings-row">
+                        <label>Máximo (ppm)</label>
+                        <input type="number" step="0.01" name="umbralNitritoMax" required>
+                    </div>
+                </div>
+    
+                <div class="threshold-section">
+                    <h4>Nitrato (NO3)</h4>
+                    <div class="settings-row">
+                        <label>Mínimo (ppm)</label>
+                        <input type="number" step="0.1" name="umbralNitratoMin" required>
+                    </div>
+                    <div class="settings-row">
+                        <label>Máximo (ppm)</label>
+                        <input type="number" step="0.1" name="umbralNitratoMax" required>
+                    </div>
+                </div>
+    
+                <div class="threshold-section">
+                    <h4>Nivel de Agua</h4>
+                    <div class="settings-row">
+                        <label>Mínimo (cm)</label>
+                        <input type="number" name="minNivel" required>
+                    </div>
+                    <div class="settings-row">
+                        <label>Máximo (cm)</label>
+                        <input type="number" name="maxNivel" required>
+                    </div>
+                </div>
+    
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="saveThresholdSettings()">Guardar</button>
+                <button class="btn btn-secondary" onclick="closeThresholdModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -563,5 +565,4 @@
 </body>
 
 </html>
-
 
