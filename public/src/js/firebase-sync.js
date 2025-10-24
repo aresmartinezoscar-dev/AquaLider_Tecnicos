@@ -42,7 +42,8 @@ export async function syncUserConfig(config) {
       nombreSistema: config.nombreSistema,
       unidadComida: config.unidadComida,
       parametrosActivos: config.parametrosActivos, // AÑADIR ESTO
-      terminosAceptadosTs: config.terminosAceptadosTs, // AÑADIR ESTO
+      terminosAceptados: config.terminosAceptados,      // AÑADIR ESTO
+      terminosAceptadosTs: config.terminosAceptadosTs,  // AÑADIR ESTO
       umbrales: {
         phMin: config.umbralPhMin,
         phMax: config.umbralPhMax,
@@ -61,6 +62,8 @@ export async function syncUserConfig(config) {
       },
       updatedAt: Date.now()
     };
+    console.log('📤 Datos a enviar a Firebase:', userData); // DEBUG
+
     
     if (!snapshot.exists()) {
       // Crear usuario nuevo
@@ -243,4 +246,5 @@ export async function downloadFromFirebase(userCode) {
   }
 
 }
+
 
