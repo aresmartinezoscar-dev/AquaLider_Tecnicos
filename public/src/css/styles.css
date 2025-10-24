@@ -325,13 +325,57 @@ body {
 }
 
 .btn-secondary {
-  background: var(--color-bg-secondary);
-  color: var(--color-text);
+  width: 100%;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  border-radius: var(--radius);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
   box-shadow: var(--shadow);
 }
 
 .btn-secondary:hover {
-  background: var(--color-border);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  opacity: 0.9;
+}
+
+/* Botones dentro de cards más visibles */
+.card button.btn-secondary {
+  background: linear-gradient(135deg, #06b6d4, #0891b2);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(6, 182, 212, 0.3);
+}
+
+.card button.btn-secondary:hover {
+  background: linear-gradient(135deg, #0891b2, #0e7490);
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.4);
+}
+
+/* Modo oscuro */
+body.dark-mode .card button.btn-secondary {
+  background: linear-gradient(135deg, #22d3ee, #06b6d4);
+  box-shadow: 0 2px 8px rgba(34, 211, 238, 0.4);
+}
+
+body.dark-mode .card button.btn-secondary:hover {
+  background: linear-gradient(135deg, #06b6d4, #0891b2);
+  box-shadow: 0 4px 12px rgba(34, 211, 238, 0.5);
+}
+
+/* Cards más visibles en modo oscuro */
+body.dark-mode .card {
+  background: var(--color-bg-secondary);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+}
+
+body.dark-mode .card h3 {
+  color: #22d3ee;
 }
 
 .btn-back {
@@ -372,13 +416,16 @@ body {
 
 /* ====== VISTA HEADER ====== */
 .view-header {
-  margin-top: 40px; /* Espacio arriba */
+  margin-top: 70px;
   margin-bottom: 24px;
+  text-align: center; /* AÑADIR ESTO */
+  padding: 0 60px; /* AÑADIR ESTO - espacio para el botón */
 }
 
 .view-header h1 {
   font-size: 28px;
   font-weight: 700;
+  margin: 0; /* AÑADIR ESTO */
 }
 
 /* ====== FORMULARIOS DE MEDICIÓN ====== */
@@ -968,6 +1015,7 @@ body {
 .terms-link:hover {
   color: var(--color-primary-dark);
 }
+
 
 
 
