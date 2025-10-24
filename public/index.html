@@ -44,6 +44,17 @@
 
         <!-- Vista Home -->
         <div id="home-view" class="view hidden">
+            <!-- AÑADIR ESTO AL PRINCIPIO: -->
+            <button id="users-button" class="users-button" onclick="showUsersModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <span id="current-user-display"></span>
+            </button>
+            
             <div class="header">
                 <svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
@@ -552,8 +563,51 @@
             </div>
         </div>
     </div>
+    
+    !-- Modal de usuarios -->
+        <div id="users-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Mis Usuarios</h3>
+                    <button class="modal-close" onclick="closeUsersModal()">✕</button>
+                </div>
+                <div class="modal-body">
+                    <div id="users-list" class="users-list">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                    <button class="btn btn-primary" onclick="showAddUserForm()" style="width: 100%; margin-top: 16px;">
+                        ➕ Añadir Nuevo Usuario
+                    </button>
+                </div>
+            </div>
+        </div>
 
-
+        <!-- Modal añadir usuario -->
+        <div id="add-user-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Añadir Usuario</h3>
+                    <button class="modal-close" onclick="closeAddUserModal()">✕</button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-user-form">
+                        <div class="form-group" style="margin-bottom: 16px;">
+                            <label for="new-user-code" style="display: block; margin-bottom: 8px; font-weight: 600;">Código de Usuario</label>
+                            <input type="text" id="new-user-code" required placeholder="Ej: Usuario123" style="width: 100%; padding: 12px; border: 2px solid var(--color-border); border-radius: var(--radius); font-size: 16px;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 16px;">
+                            <label for="new-user-name" style="display: block; margin-bottom: 8px; font-weight: 600;">Nombre del Sistema (opcional)</label>
+                            <input type="text" id="new-user-name" placeholder="Ej: Sistema Principal" style="width: 100%; padding: 12px; border: 2px solid var(--color-border); border-radius: var(--radius); font-size: 16px;">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;">
+                            <button type="submit" class="btn btn-primary">Añadir</button>
+                            <button type="button" class="btn btn-secondary" onclick="closeAddUserModal()">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script type="module" src="/acuaponia-app/public/src/js/main.js"></script>
@@ -611,5 +665,6 @@
 </body>
 
 </html>
+
 
 
