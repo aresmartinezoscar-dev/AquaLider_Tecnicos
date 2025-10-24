@@ -12,23 +12,18 @@ let config = null;
 export async function initUI() {
   config = await getConfig();
 
-  
   // Si no hay userCode, mostrar pantalla de primer uso
   if (!config.userCode) {
     showView('first-run');
     setupFirstRunForm();
     return;
-  }
-  // Verificar términos y condiciones
-  if (!config.terminosAceptados) {
-    await showTermsAndConditions();
   }
 
-  // Si no hay userCode, mostrar pantalla de primer uso
-  if (!config.userCode) {
-    showView('first-run');
-    setupFirstRunForm();
-    return;
+  // VERIFICAR TÉRMINOS ANTES DE MOSTRAR NADA
+  if (!config.terminosAceptados) {
+    console.log('⚠️ Términos no aceptados, mostrando aviso...');
+    await showTermsAndConditions();
+    config = await getConfig(); // Recargar config
   }
 
   // Si hay userCode, ir al home
@@ -39,7 +34,11 @@ export async function initUI() {
   setupSettingsForm();
   setupSyncButton();
   applyTheme();
-  updateFormVisibility(); // AÑADIR ESTO
+  
+  // Actualizar visibilidad de formularios
+  if (config.parametrosActivos) {
+    updateFormVisibility();
+  }
 
   // Intentar sincronizar automáticamente al iniciar
   if (navigator.onLine) {
@@ -835,6 +834,7 @@ Al hacer clic en "Acepto y Continuar", confirma que ha leído y acepta estos té
     };
   });
 }
+
 
 
 
