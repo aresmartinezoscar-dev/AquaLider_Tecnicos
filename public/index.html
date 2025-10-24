@@ -257,6 +257,54 @@
                     </div>
                 </form>
 
+                <!-- Registrar Dato Histórico -->
+                <div class="historical-data-section">
+                    <div class="historical-header">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        <h3>Registrar Dato Histórico</h3>
+                    </div>
+                    <p class="historical-description">
+                        Añade mediciones de fechas anteriores
+                    </p>
+                    
+                    <form id="historical-form" class="historical-form">
+                        <div class="historical-inputs">
+                            <div class="historical-field">
+                                <label for="historical-date">Fecha</label>
+                                <input type="date" id="historical-date" required max="">
+                            </div>
+                            
+                            <div class="historical-field">
+                                <label for="historical-param">Parámetro</label>
+                                <select id="historical-param" required>
+                                    <option value="">Seleccionar...</option>
+                                    <option value="ph">pH</option>
+                                    <option value="temp">Temperatura</option>
+                                    <option value="nivel">Nivel de agua</option>
+                                    <option value="conductividad">C. Eléctrica</option>
+                                    <option value="dureza">Dureza</option>
+                                    <option value="amonio">Amonio (NAT)</option>
+                                    <option value="nitrito">Nitrito (NO2)</option>
+                                    <option value="nitrato">Nitrato (NO3)</option>
+                                    <option value="mortalidad">Mortalidad</option>
+                                    <option value="comida">Comida</option>
+                                </select>
+                            </div>
+                            
+                            <div class="historical-field">
+                                <label for="historical-value">Valor</label>
+                                <input type="number" id="historical-value" step="0.01" required placeholder="Valor">
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            💾 Guardar Dato Histórico
+                        </button>
+                    </form>
+                </div>
 
             </div>
         </div>
