@@ -14,12 +14,20 @@ export async function initDB() {
       resolve(db);
     };
 
-    request.onupgradeneeded = (event) => {
+request.onupgradeneeded = (event) => {
       const db = event.target.result;
 
-      // Store de configuración
+      // Store de configuraciÃ³n
       if (!db.objectStoreNames.contains('config')) {
         db.createObjectStore('config', { keyPath: 'id' });
+      }
+
+      // AÑADIR: Store de usuarios locales
+      if (!db.objectStoreNames.contains('usuarios_locales')) {
+        const usuariosStore = db.createObjectStore('usuarios_locales', { 
+          keyPath: 'userCode'
+        });
+        usuariosStore.createIndex('lastAccess', 'lastAccess', { unique: false });
       }
 
       // Store de mediciones
@@ -31,6 +39,7 @@ export async function initDB() {
         medicionesStore.createIndex('tipo', 'tipo', { unique: false });
         medicionesStore.createIndex('ts', 'ts', { unique: false });
         medicionesStore.createIndex('tipo_ts', ['tipo', 'ts'], { unique: false });
+        medicionesStore.createIndex('userCode', 'userCode', { unique: false }); // AÑADIR
       }
 
       // Store de comentarios
@@ -41,9 +50,10 @@ export async function initDB() {
         });
         comentariosStore.createIndex('fechaISO', 'fechaISO', { unique: false });
         comentariosStore.createIndex('ts', 'ts', { unique: false });
+        comentariosStore.createIndex('userCode', 'userCode', { unique: false }); // AÑADIR
       }
 
-      // Store de cola de sincronización
+      // Store de cola de sincronizaciÃ³n
       if (!db.objectStoreNames.contains('sync_queue')) {
         const syncStore = db.createObjectStore('sync_queue', { 
           keyPath: 'id', 
@@ -51,6 +61,7 @@ export async function initDB() {
         });
         syncStore.createIndex('synced', 'synced', { unique: false });
         syncStore.createIndex('ts', 'ts', { unique: false });
+        syncStore.createIndex('userCode', 'userCode', { unique: false }); // AÑADIR
       }
 
       console.log('✅ Stores de IndexedDB creadas');
@@ -162,4 +173,5 @@ export async function cleanOldRecords(storeName) {
 
     request.onerror = () => reject(request.error);
   });
+
 }
