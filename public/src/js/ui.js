@@ -915,6 +915,21 @@ Al hacer clic en "Acepto y Continuar", confirma que ha leído y acepta estos té
   });
 }
 
+// Establecer fecha máxima en el input de datos históricos
+function setupHistoricalDateLimit() {
+  const dateInput = document.getElementById('historical-date');
+  if (dateInput) {
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.setAttribute('max', today);
+  }
+}
+
+// Llamar cuando se muestra la vista de añadir
+// AÑADIR en setupNavigationHandlers() cuando view === 'add':
+      } else if (view === 'add') {
+        showView('add');
+        setupHistoricalDateLimit(); // AÑADIR ESTO
+      }
 
 
 
