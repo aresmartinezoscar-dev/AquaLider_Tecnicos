@@ -1155,9 +1155,7 @@ const addUserFormSetup = () => {
   }
 };
 
-// Ejecutar cuando el DOM esté listo
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', addUserFormSetup);
-} else {
-  addUserFormSetup();
+// Llamar setup cuando la UI esté lista
+export function initUserManagement() {
+  setupUserManagement();
 }
