@@ -45,7 +45,7 @@
         <!-- Vista Home -->
         <div id="home-view" class="view hidden">
             <!-- AÑADIR ESTO AL PRINCIPIO: -->
-            <button id="users-button" class="users-button" onclick="showUsersModal()">
+            <button id="users-button" class="users-button">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                     <circle cx="9" cy="7" r="4"/>
@@ -569,13 +569,13 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3>Mis Usuarios</h3>
-                    <button class="modal-close" onclick="closeUsersModal()">✕</button>
+                    <button class="modal-close" data-close="users">✕</button>
                 </div>
                 <div class="modal-body">
                     <div id="users-list" class="users-list">
                         <!-- Se llenará dinámicamente -->
                     </div>
-                    <button class="btn btn-primary" onclick="showAddUserForm()" style="width: 100%; margin-top: 16px;">
+                    <button id="add-user-button" class="btn btn-primary" style="width: 100%; margin-top: 16px;">
                         ➕ Añadir Nuevo Usuario
                     </button>
                 </div>
@@ -587,7 +587,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3>Añadir Usuario</h3>
-                    <button class="modal-close" onclick="closeAddUserModal()">✕</button>
+                    <button class="modal-close" data-close="add-user">✕</button>
                 </div>
                 <div class="modal-body">
                     <form id="add-user-form">
@@ -665,6 +665,7 @@
 </body>
 
 </html>
+
 
 
 
