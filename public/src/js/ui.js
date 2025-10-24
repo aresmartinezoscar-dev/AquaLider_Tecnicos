@@ -559,6 +559,123 @@ function showToast(message) {
 
 }
 
+// ====== SELECCIÓN DE PARÁMETROS ======
+
+window.showParameterSelection = function() {
+  const modal = document.getElementById('parameter-modal');
+  modal.classList.remove('hidden');
+  
+  // Cargar selección actual
+  if (config.parametrosActivos) {
+    document.querySelector('[name="param-temp"]').checked = config.parametrosActivos.temp;
+    document.querySelector('[name="param-nivel"]').checked = config.parametrosActivos.nivel;
+    document.querySelector('[name="param-conductividad"]').checked = config.parametrosActivos.conductividad;
+    document.querySelector('[name="param-dureza"]').checked = config.parametrosActivos.dureza;
+  }
+};
+
+window.closeParameterModal = function() {
+  document.getElementById('parameter-modal').classList.add('hidden');
+};
+
+window.saveParameterSelection = async function() {
+  const parametrosActivos = {
+    ph: true, // Siempre activo
+    temp: document.querySelector('[name="param-temp"]').checked,
+    nivel: document.querySelector('[name="param-nivel"]').checked,
+    conductividad: document.querySelector('[name="param-conductividad"]').checked,
+    dureza: document.querySelector('[name="param-dureza"]').checked,
+    amonio: true, // Siempre activo
+    nitrito: true, // Siempre activo
+    nitrato: true, // Siempre activo
+    mortalidad: true, // Siempre activo
+    comida: true // Siempre activo
+  };
+  
+  await updateConfig({ parametrosActivos });
+  config = await getConfig();
+  
+  // Actualizar visibilidad de formularios
+  updateFormVisibility();
+  
+  closeParameterModal();
+  showToast('✅ Parámetros guardados');
+};
+
+// ====== UMBRALES ======
+
+window.showThresholdSettings = function() {
+  const modal = document.getElementById('threshold-modal');
+  const form = document.getElementById('settings-form');
+  
+  // Cargar valores actuales
+  modal.querySelector('[name="umbralPhMin"]').value = config.umbralPhMin;
+  modal.querySelector('[name="umbralPhMax"]').value = config.umbralPhMax;
+  modal.querySelector('[name="umbralCondMin"]').value = config.umbralCondMin;
+  modal.querySelector('[name="umbralCondMax"]').value = config.umbralCondMax;
+  modal.querySelector('[name="umbralAmonioMin"]').value = config.umbralAmonioMin;
+  modal.querySelector('[name="umbralAmonioMax"]').value = config.umbralAmonioMax;
+  modal.querySelector('[name="umbralNitritoMin"]').value = config.umbralNitritoMin;
+  modal.querySelector('[name="umbralNitritoMax"]').value = config.umbralNitritoMax;
+  modal.querySelector('[name="umbralNitratoMin"]').value = config.umbralNitratoMin;
+  modal.querySelector('[name="umbralNitratoMax"]').value = config.umbralNitratoMax;
+  modal.querySelector('[name="minNivel"]').value = config.minNivel;
+  modal.querySelector('[name="maxNivel"]').value = config.maxNivel;
+  
+  modal.classList.remove('hidden');
+};
+
+window.closeThresholdModal = function() {
+  document.getElementById('threshold-modal').classList.add('hidden');
+};
+
+window.saveThresholdSettings = async function() {
+  const modal = document.getElementById('threshold-modal');
+  
+  await updateConfig({
+    umbralPhMin: parseFloat(modal.querySelector('[name="umbralPhMin"]').value),
+    umbralPhMax: parseFloat(modal.querySelector('[name="umbralPhMax"]').value),
+    umbralCondMin: parseFloat(modal.querySelector('[name="umbralCondMin"]').value),
+    umbralCondMax: parseFloat(modal.querySelector('[name="umbralCondMax"]').value),
+    umbralAmonioMin: parseFloat(modal.querySelector('[name="umbralAmonioMin"]').value),
+    umbralAmonioMax: parseFloat(modal.querySelector('[name="umbralAmonioMax"]').value),
+    umbralNitritoMin: parseFloat(modal.querySelector('[name="umbralNitritoMin"]').value),
+    umbralNitritoMax: parseFloat(modal.querySelector('[name="umbralNitritoMax"]').value),
+    umbralNitratoMin: parseFloat(modal.querySelector('[name="umbralNitratoMin"]').value),
+    umbralNitratoMax: parseFloat(modal.querySelector('[name="umbralNitratoMax"]').value),
+    minNivel: parseFloat(modal.querySelector('[name="minNivel"]').value),
+    maxNivel: parseFloat(modal.querySelector('[name="maxNivel"]').value)
+  });
+  
+  config = await getConfig();
+  closeThresholdModal();
+  showToast('✅ Umbrales guardados');
+  
+  // Sincronizar
+  if (navigator.onLine) {
+    await syncAll(config);
+  }
+};
+
+// Actualizar visibilidad de formularios según configuración
+function updateFormVisibility() {
+  const forms = document.querySelectorAll('.measurement-form[data-type]');
+  const tabs = document.querySelectorAll('.tab[data-param]');
+  
+  forms.forEach(form => {
+    const tipo = form.getAttribute('data-type');
+    if (config.parametrosActivos && config.parametrosActivos[tipo] !== undefined) {
+      form.style.display = config.parametrosActivos[tipo] ? 'block' : 'none';
+    }
+  });
+  
+  tabs.forEach(tab => {
+    const tipo = tab.getAttribute('data-param');
+    if (config.parametrosActivos && config.parametrosActivos[tipo] !== undefined) {
+      tab.style.display = config.parametrosActivos[tipo] ? 'block' : 'none';
+    }
+  });
+}
 
 
 
