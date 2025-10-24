@@ -530,7 +530,7 @@ function setupSyncButton() {
         if (result.success) {
             syncText.textContent = '✅ Sincronizado';
             setTimeout(() => {
-                syncText.textContent = 'Sincronizar ahora';
+                syncText.textContent = 'Sincronizar';
             }, 2000);
 
             showToast(result.message);
@@ -805,6 +805,7 @@ Al hacer clic en "Acepto y Continuar", confirma que ha leído y acepta estos té
     };
   });
 }
+
 
 
 
