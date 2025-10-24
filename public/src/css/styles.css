@@ -404,15 +404,18 @@ body.dark-mode .card h3 {
 }
 
 .bottom-actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
   gap: 12px;
   margin-top: 24px;
 }
 
-
-.bottom-actions .btn-primary {
-  flex: 1;
+.bottom-actions .btn-primary,
+.bottom-actions .btn-secondary {
+  width: 100%; /* Ocupar todo el ancho de su columna */
+  flex: none; /* Eliminar flex anterior */
 }
+
 
 /* ====== VISTA HEADER ====== */
 .view-header {
@@ -1015,6 +1018,7 @@ body.dark-mode .card h3 {
 .terms-link:hover {
   color: var(--color-primary-dark);
 }
+
 
 
 
