@@ -727,13 +727,28 @@ async function showTermsAndConditions() {
     
     document.body.appendChild(banner);
     
-    window.acceptTerms = async () => {
+   window.acceptTerms = async () => {
       const now = Date.now();
+      console.log('✅ Aceptando términos con timestamp:', now);
+      
       await updateConfig({ 
         terminosAceptados: true,
-        terminosAceptadosTs: now // AÑADIR ESTO
+        terminosAceptadosTs: now
       });
+      
       config = await getConfig();
+      console.log('📋 Config actualizada:', config);
+      
+      // FORZAR SINCRONIZACIÓN INMEDIATA
+      if (navigator.onLine) {
+        console.log('🔄 Sincronizando términos con Firebase...');
+        const { syncAll } = await import('./firebase-sync.js');
+        const result = await syncAll(config);
+        console.log('✅ Resultado sincronización:', result);
+      } else {
+        console.warn('⚠️ Sin conexión, se sincronizará después');
+      }
+      
       banner.remove();
       resolve(true);
     };
@@ -805,6 +820,7 @@ Al hacer clic en "Acepto y Continuar", confirma que ha leído y acepta estos té
     };
   });
 }
+
 
 
 
