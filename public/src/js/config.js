@@ -37,6 +37,17 @@ export const defaultUserConfig = {
   minNivel: 10,
   maxNivel: 50,
   modoOscuro: false,
+    parametrosActivos: {
+    ph: true,
+    temp: false,           // Oculto por defecto
+    nivel: false,          // Oculto por defecto
+    conductividad: false,  // Oculto por defecto
+    dureza: false,         // Oculto por defecto
+    amonio: true,
+    nitrito: true,
+    nitrato: true,
+    mortalidad: true,      // Nuevo parámetro obligatorio
+    comida: true,
   alarmasComida: [
     { activa: false, hora: '7:45 AM' },
     { activa: false, hora: '10:45 AM' },
@@ -44,5 +55,6 @@ export const defaultUserConfig = {
     { activa: false, hora: '3:45 PM' }
   ]
 };
+
 
 
