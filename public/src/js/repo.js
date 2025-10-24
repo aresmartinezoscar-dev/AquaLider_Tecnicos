@@ -280,3 +280,145 @@ export async function importCommentsFromFirebase(firebaseComentarios) {
 }
 
 
+// AÑADIR AL INICIO del archivo, después de los imports:
+let currentUserCode = null;
+
+export function setCurrentUser(userCode) {
+  currentUserCode = userCode;
+  console.log('👤 Usuario actual:', userCode);
+}
+
+export function getCurrentUser() {
+  return currentUserCode;
+}
+
+// ====== GESTIÓN DE USUARIOS LOCALES ======
+
+export async function saveLocalUser(userData) {
+  const user = {
+    userCode: userData.userCode,
+    nombreSistema: userData.nombreSistema || '',
+    deviceId: userData.deviceId,
+    lastAccess: Date.now()
+  };
+  
+  await saveToStore('usuarios_locales', user);
+  console.log('✅ Usuario local guardado:', user);
+  return user;
+}
+
+export async function getAllLocalUsers() {
+  const users = await getAllFromStore('usuarios_locales');
+  return users.sort((a, b) => b.lastAccess - a.lastAccess);
+}
+
+export async function updateUserLastAccess(userCode) {
+  const user = await getFromStore('usuarios_locales', userCode);
+  if (user) {
+    user.lastAccess = Date.now();
+    await saveToStore('usuarios_locales', user);
+  }
+}
+
+export async function deleteLocalUser(userCode) {
+  await deleteFromStore('usuarios_locales', userCode);
+  
+  // También eliminar sus mediciones y comentarios
+  const mediciones = await getAllFromStore('mediciones');
+  for (const m of mediciones) {
+    if (m.userCode === userCode) {
+      await deleteFromStore('mediciones', m.id);
+    }
+  }
+  
+  const comentarios = await getAllFromStore('comentarios');
+  for (const c of comentarios) {
+    if (c.userCode === userCode) {
+      await deleteFromStore('comentarios', c.id);
+    }
+  }
+  
+  console.log('🗑️ Usuario eliminado:', userCode);
+}
+
+// MODIFICAR saveMeasurement para incluir userCode:
+export async function saveMeasurement(measurement) {
+  const userCode = getCurrentUser();
+  if (!userCode) {
+    throw new Error('No hay usuario activo');
+  }
+  
+  // Agregar userCode a la medición
+  measurement.userCode = userCode;
+  
+  const id = await saveToStore('mediciones', measurement);
+
+  // Agregar a cola de sincronización
+  await saveToStore('sync_queue', {
+    type: 'measurement',
+    data: { ...measurement, id },
+    userCode: userCode, // AÑADIR
+    synced: false,
+    ts: Date.now()
+  });
+
+  await cleanOldRecords('mediciones');
+
+  return id;
+}
+
+// MODIFICAR getAllMeasurements para filtrar por usuario:
+export async function getAllMeasurements() {
+  const userCode = getCurrentUser();
+  if (!userCode) return [];
+  
+  const all = await getAllFromStore('mediciones');
+  return all.filter(m => m.userCode === userCode);
+}
+
+// MODIFICAR getMeasurementsByType:
+export async function getMeasurementsByType(tipo) {
+  const userCode = getCurrentUser();
+  if (!userCode) return [];
+  
+  const all = await getByIndex('mediciones', 'tipo', tipo);
+  return all.filter(m => m.userCode === userCode);
+}
+
+// MODIFICAR saveComment:
+export async function saveComment(comment) {
+  const userCode = getCurrentUser();
+  if (!userCode) {
+    throw new Error('No hay usuario activo');
+  }
+  
+  comment.userCode = userCode;
+  const id = await saveToStore('comentarios', comment);
+
+  await saveToStore('sync_queue', {
+    type: 'comment',
+    data: { ...comment, id },
+    userCode: userCode, // AÑADIR
+    synced: false,
+    ts: Date.now()
+  });
+
+  return id;
+}
+
+// MODIFICAR getAllComments:
+export async function getAllComments() {
+  const userCode = getCurrentUser();
+  if (!userCode) return [];
+  
+  const all = await getAllFromStore('comentarios');
+  const filtered = all.filter(c => c.userCode === userCode);
+  return filtered.sort((a, b) => b.ts - a.ts);
+}
+
+// MODIFICAR getPendingSync:
+export async function getPendingSync() {
+  const userCode = getCurrentUser();
+  const queue = await getAllFromStore('sync_queue');
+  return queue.filter(item => !item.synced && item.userCode === userCode);
+}
