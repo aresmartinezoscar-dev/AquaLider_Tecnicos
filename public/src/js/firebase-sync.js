@@ -36,58 +36,42 @@ export async function syncUserConfig(config) {
   try {
     const userRef = ref(database, `usuarios/${config.userCode}`);
     
-    // Verificar si el usuario existe
     const snapshot = await get(userRef);
+    
+    const userData = {
+      nombreSistema: config.nombreSistema,
+      unidadComida: config.unidadComida,
+      parametrosActivos: config.parametrosActivos, // AÑADIR ESTO
+      umbrales: {
+        phMin: config.umbralPhMin,
+        phMax: config.umbralPhMax,
+        condMin: config.umbralCondMin,
+        condMax: config.umbralCondMax,
+        amonioMin: config.umbralAmonioMin,
+        amonioMax: config.umbralAmonioMax,
+        nitritoMin: config.umbralNitritoMin,
+        nitritoMax: config.umbralNitritoMax,
+        nitratoMin: config.umbralNitratoMin,
+        nitratoMax: config.umbralNitratoMax
+      },
+      nivel: {
+        min: config.minNivel,
+        max: config.maxNivel
+      },
+      updatedAt: Date.now()
+    };
     
     if (!snapshot.exists()) {
       // Crear usuario nuevo
       await set(userRef, {
         createdAt: Date.now(),
         deviceId: config.deviceId,
-        nombreSistema: config.nombreSistema,
-        unidadComida: config.unidadComida,
-        umbrales: {
-          phMin: config.umbralPhMin,
-          phMax: config.umbralPhMax,
-          condMin: config.umbralCondMin,
-          condMax: config.umbralCondMax,
-          amonioMin: config.umbralAmonioMin,
-          amonioMax: config.umbralAmonioMax,
-          nitritoMin: config.umbralNitritoMin,
-          nitritoMax: config.umbralNitritoMax,
-          nitratoMin: config.umbralNitratoMin,
-          nitratoMax: config.umbralNitratoMax
-        },
-        nivel: {
-          min: config.minNivel,
-          max: config.maxNivel
-        },
-        updatedAt: Date.now()
+        ...userData
       });
       console.log('✅ Usuario creado en Firebase');
     } else {
       // Actualizar usuario existente
-      await update(userRef, {
-        nombreSistema: config.nombreSistema,
-        unidadComida: config.unidadComida,
-        umbrales: {
-          phMin: config.umbralPhMin,
-          phMax: config.umbralPhMax,
-          condMin: config.umbralCondMin,
-          condMax: config.umbralCondMax,
-          amonioMin: config.umbralAmonioMin,
-          amonioMax: config.umbralAmonioMax,
-          nitritoMin: config.umbralNitritoMin,
-          nitritoMax: config.umbralNitritoMax,
-          nitratoMin: config.umbralNitratoMin,
-          nitratoMax: config.umbralNitratoMax
-        },
-        nivel: {
-          min: config.minNivel,
-          max: config.maxNivel
-        },
-        updatedAt: Date.now()
-      });
+      await update(userRef, userData);
       console.log('✅ Usuario actualizado en Firebase');
     }
 
@@ -256,4 +240,5 @@ export async function downloadFromFirebase(userCode) {
     console.error('❌ Error al descargar datos:', error);
     return null;
   }
+
 }
