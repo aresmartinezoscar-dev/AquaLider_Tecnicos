@@ -305,6 +305,8 @@ function setupMeasurementForms() {
 
             // Mostrar confirmación
             showToast('✅ Medición guardada');
+
+          
         });
     });
 
@@ -331,6 +333,72 @@ function setupMeasurementForms() {
         textarea.value = '';
         showToast('✅ Comentario guardado');
     });
+
+  // Formulario de datos históricos
+  const historicalForm = document.getElementById('historical-form');
+  if (historicalForm) {
+    historicalForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const dateInput = document.getElementById('historical-date').value;
+      const tipo = document.getElementById('historical-param').value;
+      const valor = parseFloat(document.getElementById('historical-value').value);
+      
+      if (!dateInput || !tipo || isNaN(valor)) {
+        alert('Por favor completa todos los campos correctamente');
+        return;
+      }
+      
+      // Convertir fecha a timestamp de las 9:00 AM
+      const selectedDate = new Date(dateInput + 'T09:00:00');
+      const ts = selectedDate.getTime();
+      
+      // Verificar que la fecha no sea futura
+      if (ts > Date.now()) {
+        alert('⚠️ No puedes registrar datos de fechas futuras');
+        return;
+      }
+      
+      // Obtener último valor del mismo tipo para calcular tendencia
+      const lastMeasurement = await getLastMeasurementByType(tipo);
+      let tendencia = 'same';
+      
+      if (lastMeasurement) {
+        // Comparar con el último registro (puede ser anterior o posterior en el tiempo)
+        tendencia = calculateTrend(valor, lastMeasurement.valor);
+      }
+      
+      // Crear medición histórica
+      const measurement = {
+        tipo,
+        valor,
+        unidad: getParamUnit(tipo, config),
+        ts: ts, // Timestamp de las 9:00 AM del día seleccionado
+        tendencia
+      };
+      
+      // Guardar
+      await saveMeasurement(measurement);
+      
+      // Limpiar formulario
+      document.getElementById('historical-date').value = '';
+      document.getElementById('historical-param').value = '';
+      document.getElementById('historical-value').value = '';
+      
+      // Recargar últimos valores
+      await loadLastValues();
+      
+      // Mostrar confirmación con la fecha
+      const fechaFormato = selectedDate.toLocaleDateString('es-CO', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      showToast(`✅ Dato histórico guardado: ${fechaFormato}`);
+      
+      console.log('📊 Dato histórico guardado:', measurement);
+    });
+  }
 }
 
 // ====== HISTÓRICO ======
@@ -834,6 +902,7 @@ Al hacer clic en "Acepto y Continuar", confirma que ha leído y acepta estos té
     };
   });
 }
+
 
 
 
