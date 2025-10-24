@@ -2,14 +2,293 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=public/index.html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirigiendo...</title>
-    <script>
-        window.location.href = "public/index.html";
-    </script>
+    <title>Flores Mary - Flores Frescas y Hermosas para Cada Ocasión</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <p>Redirigiendo a la aplicación...</p>
+    <!-- Navegación -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <span class="logo-icon">🌸</span>
+                    <span class="logo-text">Flores Mary</span>
+                </div>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#productos">Productos</a></li>
+                    <li><a href="#sobre-nosotros">Sobre Nosotros</a></li>
+                    <li><a href="#contacto">Contacto</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">Flores Mary</h1>
+            <p class="hero-subtitle">Belleza natural para cada momento especial</p>
+            <a href="#productos" class="btn btn-primary">Ver Catálogo</a>
+        </div>
+    </section>
+
+    <!-- Productos Section -->
+    <section class="products" id="productos">
+        <div class="container">
+            <h2 class="section-title">Nuestras Flores</h2>
+            <p class="section-subtitle">Descubre nuestra selección de flores frescas y arreglos únicos</p>
+            
+            <div class="products-grid">
+                <!-- Producto 1 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=800&q=80" alt="Rosas Rojas">
+                        <div class="product-badge">Nuevo</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Rosas Rojas Premium</h3>
+                        <p class="product-description">Docena de rosas rojas frescas, perfectas para expresar amor</p>
+                        <div class="product-footer">
+                            <span class="product-price">$45.000</span>
+                            <button class="btn btn-secondary">Consultar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 2 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=800&q=80" alt="Girasoles">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Girasoles Radiantes</h3>
+                        <p class="product-description">Arreglo de girasoles frescos que llenan de alegría cualquier espacio</p>
+                        <div class="product-footer">
+                            <span class="product-price">$38.000</span>
+                            <button class="btn btn-secondary">Consultar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 3 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=800&q=80" alt="Tulipanes">
+                        <div class="product-badge">Popular</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Tulipanes Mixtos</h3>
+                        <p class="product-description">Hermosa combinación de tulipanes en colores vibrantes</p>
+                        <div class="product-footer">
+                            <span class="product-price">$42.000</span>
+                            <button class="btn btn-secondary">Consultar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 4 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1594582895971-ba48356d034f?w=800&q=80" alt="Orquídeas">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Orquídeas Elegantes</h3>
+                        <p class="product-description">Orquídeas exóticas de larga duración para decoración</p>
+                        <div class="product-footer">
+                            <span class="product-price">$55.000</span>
+                            <button class="btn btn-secondary">Consultar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 5 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1488295735753-9b22c2d38a2a?w=800&q=80" alt="Lirios">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Lirios Negros</h3>
+                        <p class="product-description">Lirios blancos puros, símbolo de elegancia y paz</p>
+                        <div class="product-footer">
+                            <span class="product-price">$50.000</span>
+                            <button class="btn btn-secondary">Consultar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 6 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=800&q=80" alt="Arreglo Mixto">
+                        <div class="product-badge">Especial</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Arreglo Premium</h3>
+                        <p class="product-description">Combinación exclusiva de flores de temporada</p>
+                        <div class="product-footer">
+                            <span class="product-price">$65.000</span>
+                            <button class="btn btn-secondary">Consultar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Características -->
+    <section class="features">
+        <div class="container">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🚚</div>
+                    <h3>Entrega a Domicilio</h3>
+                    <p>Llevamos tus flores frescas directamente a tu puerta</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌺</div>
+                    <h3>Flores Frescas</h3>
+                    <p>Renovamos nuestro inventario diariamente</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💝</div>
+                    <h3>Arreglos Personalizados</h3>
+                    <p>Creamos el arreglo perfecto para tu ocasión especial</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sobre Nosotros -->
+    <section class="about" id="sobre-nosotros">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&q=80" alt="Flores Mary">
+                </div>
+                <div class="about-text">
+                    <h2 class="section-title">Sobre Flores Mary</h2>
+                    <p>Con más de 15 años de experiencia, Flores Mary se ha convertido en la florería de confianza para miles de clientes en la región. Nuestra pasión es crear momentos inolvidables a través de arreglos florales únicos y flores de la más alta calidad.</p>
+                    <p>Trabajamos directamente con cultivadores locales para garantizar la frescura de cada flor que llega a tus manos. Cada arreglo es creado con amor y dedicación por nuestro equipo de floristas expertos.</p>
+                    <div class="about-stats">
+                        <div class="stat">
+                            <span class="stat-number">15+</span>
+                            <span class="stat-label">Años de Experiencia</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">5000+</span>
+                            <span class="stat-label">Clientes Felices</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">100%</span>
+                            <span class="stat-label">Frescura Garantizada</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contacto -->
+    <section class="contact" id="contacto">
+        <div class="container">
+            <h2 class="section-title">Contáctanos</h2>
+            <p class="section-subtitle">Estamos aquí para ayudarte con tu pedido especial</p>
+            
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">📍</div>
+                        <div>
+                            <h3>Ubicación</h3>
+                            <p>Barranquilla, Atlántico, Colombia</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">📞</div>
+                        <div>
+                            <h3>Teléfono</h3>
+                            <p>+57 300 123 4567</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">📧</div>
+                        <div>
+                            <h3>Email</h3>
+                            <p>info@floresmary.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">⏰</div>
+                        <div>
+                            <h3>Horario</h3>
+                            <p>Lun - Sáb: 8:00 AM - 7:00 PM</p>
+                            <p>Domingo: 9:00 AM - 2:00 PM</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <input type="text" placeholder="Tu Nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="Tu Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" placeholder="Tu Teléfono" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea placeholder="Tu Mensaje" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enviar Mensaje</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Flores Mary</h3>
+                    <p>Tu florería de confianza para cada momento especial</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Enlaces Rápidos</h3>
+                    <ul>
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#productos">Productos</a></li>
+                        <li><a href="#sobre-nosotros">Sobre Nosotros</a></li>
+                        <li><a href="#contacto">Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Síguenos</h3>
+                    <div class="social-links">
+                        <a href="#" class="social-link">Facebook</a>
+                        <a href="#" class="social-link">Instagram</a>
+                        <a href="#" class="social-link">WhatsApp</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Flores Mary. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
