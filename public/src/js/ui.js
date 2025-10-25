@@ -13,10 +13,22 @@ let config = null;
 export async function initUI() {
   config = await getConfig();
 
+  // Verificar si hay un usuario guardado en este dispositivo
+  const savedUser = getCurrentUser();
+  
+  if (savedUser.userCode && !config.userCode) {
+    // Cargar usuario guardado
+    await updateConfig({
+      userCode: savedUser.userCode
+    });
+    config = await getConfig();
+  }
+
   // Si no hay userCode, mostrar pantalla de primer uso
   if (!config.userCode) {
     showView('first-run');
     setupFirstRunForm();
+    hideUserSelector(); // Ocultar selector
     return;
   }
 
@@ -24,7 +36,7 @@ export async function initUI() {
   if (!config.terminosAceptados) {
     console.log('⚠️ Términos no aceptados, mostrando aviso...');
     await showTermsAndConditions();
-    config = await getConfig(); // Recargar config
+    config = await getConfig();
   }
 
   // Si hay userCode, ir al home
@@ -35,6 +47,7 @@ export async function initUI() {
   setupSettingsForm();
   setupSyncButton();
   applyTheme();
+  showUserSelector(); // Mostrar selector
   
   // Actualizar visibilidad de formularios
   if (config.parametrosActivos) {
@@ -1082,3 +1095,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
