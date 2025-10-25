@@ -3,6 +3,7 @@ import { checkThreshold, showAlert, hideAlert, checkAlertResolution } from './al
 import { renderChart, destroyChart } from './charts.js';
 import { syncAll, initFirebase } from './firebase-sync.js';
 import { generateUUID, formatDateTime, formatDateISO, calculateTrend, getTrendIcon, getTrendColor, getParamName, getParamUnit, exportToCSV } from './util.js';
+import { getUsersList, addUserToList, setCurrentUser, getCurrentUser, removeUserFromList } from './user-manager.js';
 
 let currentView = 'home';
 let currentParam = 'ph';
@@ -86,6 +87,10 @@ function setupFirstRunForm() {
       deviceId
     });
 
+    // AÑADIR: Guardar en lista de usuarios del dispositivo
+    addUserToList(userCode, systemName);
+    setCurrentUser(userCode, systemName);
+
     // Recargar config
     config = await getConfig();
 
@@ -166,6 +171,15 @@ function setupFirstRunForm() {
       await showTermsAndConditions();
       config = await getConfig(); // Recargar después de aceptar
     }
+    // Recargar config después de importar
+    config = await getConfig();
+    
+    // VERIFICAR TÉRMINOS DESPUÉS DE CARGAR TODO
+    if (!config.terminosAceptados) {
+      console.log('⚠️ Usuario debe aceptar términos');
+      await showTermsAndConditions();
+      config = await getConfig();
+    }
 
     // Ir al home
     showView('home');
@@ -176,6 +190,9 @@ function setupFirstRunForm() {
     setupSyncButton();
     applyTheme();
     updateFormVisibility();
+    
+    // AÑADIR: Mostrar selector de usuarios
+    showUserSelector();
   });
 }
 
@@ -924,3 +941,144 @@ function setupHistoricalDateLimit() {
     dateInput.setAttribute('max', today);
   }
 }
+
+// ====== SELECTOR DE USUARIOS ======
+
+function showUserSelector() {
+  const container = document.getElementById('user-selector-container');
+  if (container) {
+    container.classList.remove('hidden');
+    updateUserDisplay();
+    loadUsersList();
+  }
+}
+
+function hideUserSelector() {
+  const container = document.getElementById('user-selector-container');
+  if (container) {
+    container.classList.add('hidden');
+  }
+}
+
+function updateUserDisplay() {
+  const display = document.getElementById('current-user-display');
+  if (display && config) {
+    display.textContent = config.nombreSistema || config.userCode || 'Usuario';
+  }
+}
+
+function loadUsersList() {
+  const usersList = document.getElementById('users-list');
+  if (!usersList) return;
+  
+  const users = getUsersList();
+  const currentUserCode = config?.userCode;
+  
+  if (users.length === 0) {
+    usersList.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--color-text-secondary);">No hay usuarios registrados</div>';
+    return;
+  }
+  
+  usersList.innerHTML = users.map(user => `
+    <div class="user-item ${user.userCode === currentUserCode ? 'active' : ''}" onclick="switchUser('${user.userCode}')">
+      <div class="user-item-info">
+        <div class="user-item-code">${user.nombreSistema || user.userCode}</div>
+        <div class="user-item-name">${user.userCode}</div>
+      </div>
+      ${user.userCode !== currentUserCode ? `
+        <button class="user-item-delete" onclick="event.stopPropagation(); deleteUser('${user.userCode}')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px;">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+          </svg>
+        </button>
+      ` : ''}
+    </div>
+  `).join('');
+}
+
+// Funciones globales para el HTML
+window.switchUser = async function(userCode) {
+  if (userCode === config?.userCode) {
+    toggleUserDropdown();
+    return;
+  }
+  
+  console.log('🔄 Cambiando a usuario:', userCode);
+  
+  // Cerrar dropdown
+  toggleUserDropdown();
+  
+  // Limpiar IndexedDB del usuario actual
+  if (confirm(`¿Cambiar a usuario ${userCode}?\n\nLos datos del usuario actual se mantendrán guardados.`)) {
+    // Recargar la página para iniciar sesión con el nuevo usuario
+    setCurrentUser(userCode, '');
+    window.location.reload();
+  }
+};
+
+window.deleteUser = function(userCode) {
+  const users = getUsersList();
+  const user = users.find(u => u.userCode === userCode);
+  
+  if (!user) return;
+  
+  if (confirm(`¿Eliminar usuario "${user.nombreSistema || userCode}" de este dispositivo?\n\nEsto NO borrará los datos de Firebase, solo de este dispositivo.`)) {
+    removeUserFromList(userCode);
+    loadUsersList();
+    showToast('🗑️ Usuario eliminado del dispositivo');
+  }
+};
+
+window.addNewUser = function() {
+  toggleUserDropdown();
+  
+  // Limpiar configuración local
+  if (confirm('¿Añadir un nuevo usuario?\n\nTe llevaremos a la pantalla de inicio de sesión.')) {
+    // Limpiar config pero mantener la lista de usuarios
+    localStorage.removeItem('current_user_code');
+    localStorage.removeItem('current_user_name');
+    window.location.reload();
+  }
+};
+
+function toggleUserDropdown() {
+  const btn = document.getElementById('user-selector-btn');
+  const dropdown = document.getElementById('user-dropdown');
+  
+  if (!btn || !dropdown) return;
+  
+  const isHidden = dropdown.classList.contains('hidden');
+  
+  if (isHidden) {
+    dropdown.classList.remove('hidden');
+    btn.classList.add('active');
+    loadUsersList();
+  } else {
+    dropdown.classList.add('hidden');
+    btn.classList.remove('active');
+  }
+}
+
+// Event listener para el botón
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('user-selector-btn');
+  if (btn) {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleUserDropdown();
+    });
+  }
+  
+  // Cerrar dropdown al hacer clic fuera
+  document.addEventListener('click', (e) => {
+    const container = document.getElementById('user-selector-container');
+    const dropdown = document.getElementById('user-dropdown');
+    
+    if (container && dropdown && !container.contains(e.target)) {
+      dropdown.classList.add('hidden');
+      const btn = document.getElementById('user-selector-btn');
+      if (btn) btn.classList.remove('active');
+    }
+  });
+});
