@@ -16,6 +16,37 @@
     <!-- Banner de alertas -->
     <div id="alert-banner" class="alert-banner hidden"></div>
 
+    <!-- Selector de usuarios -->
+    <div id="user-selector-container" class="user-selector-container hidden">
+        <button id="user-selector-btn" class="user-selector-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span id="current-user-display">Usuario</span>
+            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"/>
+            </svg>
+        </button>
+        
+        <div id="user-dropdown" class="user-dropdown hidden">
+            <div class="user-dropdown-header">
+                Cambiar Usuario
+            </div>
+            <div id="users-list" class="users-list">
+                <!-- Lista de usuarios se llenará dinámicamente -->
+            </div>
+            <button class="user-dropdown-add" onclick="addNewUser()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="16"/>
+                    <line x1="8" y1="12" x2="16" y2="12"/>
+                </svg>
+                Añadir Nuevo Usuario
+            </button>
+        </div>
+    </div>
+
     <!-- Contenedor principal -->
     <div id="app">
         <!-- Vista de primer uso -->
@@ -611,5 +642,6 @@
 </body>
 
 </html>
+
 
 
